@@ -49,7 +49,7 @@ typedef struct
 Std_ReturnType button_init(const button_t *btn);
 
 /**
- * @brief Read the state of the button
+ * @brief Reads the state of the button
  * 
  * @param btn A pointer to the button configuration structure.
  * @param state Retrieves the button state
