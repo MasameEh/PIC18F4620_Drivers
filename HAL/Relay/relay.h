@@ -1,7 +1,7 @@
 /* 
  * File:   relay.h
  * Author: Mohamed Sameh
- *
+  * This header file provides the interface and data structures for controlling a relay based on a provided relay configuration.
  * Created on August 27, 2023, 8:58 PM
  */
 

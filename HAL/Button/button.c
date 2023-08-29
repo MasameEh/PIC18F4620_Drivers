@@ -1,7 +1,8 @@
 /* 
- * File:   button.h
+ * File:   button.c
  * Author: Mohamed Sameh
- *
+ * Description:
+ * This source file defines functions for initializing and reading the state of a button. 
  * Created on August 27, 2023, 1:54 AM
  */
 
@@ -25,7 +26,7 @@ Std_ReturnType button_init(const button_t *btn)
     }
     else
     {
-        gpio_pin_set_direction(&btn->pin);
+        ret = gpio_pin_set_direction(&btn->pin);
     }
     return ret;
 }
@@ -50,7 +51,7 @@ Std_ReturnType button_read_state(const button_t *btn, button_state_t *state)
     }
     else
     {   
-        gpio_pin_read(&btn->pin, &logic);
+        ret = gpio_pin_read(&btn->pin, &logic);
         if(BUTTON_ACTIVE_HIGH == btn->button_connection)
         {
             if (GPIO_HIGH == logic)

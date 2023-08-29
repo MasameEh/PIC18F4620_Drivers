@@ -1,7 +1,11 @@
 /* 
  * File:   button.h
  * Author: Mohamed Sameh
- *
+ * Description:
+ * This header file provides an interface for working with buttons using GPIO pins. 
+ * It defines data structures for button configurations, states, and active states.
+ *  Additionally, it declares functions to initialize and read the state of buttons, supporting both active-high and active-low configurations.
+ * 
  * Created on August 27, 2023, 1:54 AM
  */
 

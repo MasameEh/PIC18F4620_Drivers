@@ -1,7 +1,12 @@
 /* 
  * File:   led.c
  * Author: Mohamed Sameh
- *
+ * 
+ * Description:
+ * This source file contains the implementation of LED control functions. The functions defined in this file
+ * allow initializing an LED, turning it on, turning it off, and toggling its state based on the provided LED configuration.
+ * 
+ * 
  * Created on August 22, 2023, 11:29 PM
  */
 
@@ -33,7 +38,7 @@ Std_ReturnType led_init(const led_t *led)
             .direction = GPIO_DIRECTION_OUTPUT,
             .logic = led->led_status
         };
-        gpio_pin_intialize(&pin);
+        ret = gpio_pin_intialize(&pin);
     }
 
     return ret;
@@ -64,7 +69,7 @@ Std_ReturnType led_turn_on(const led_t *led)
             .direction = GPIO_DIRECTION_OUTPUT,
             .logic = led->led_status
         };
-        gpio_pin_write(&pin, GPIO_HIGH);
+        ret = gpio_pin_write(&pin, GPIO_HIGH);
     }
 
     return ret;
@@ -95,7 +100,7 @@ Std_ReturnType led_turn_off(const led_t *led)
             .direction = GPIO_DIRECTION_OUTPUT,
             .logic = led->led_status
         };
-        gpio_pin_write(&pin, GPIO_LOW);
+        ret = gpio_pin_write(&pin, GPIO_LOW);
     }
 
     return ret;
@@ -126,7 +131,7 @@ Std_ReturnType led_toggle(const led_t *led)
             .direction = GPIO_DIRECTION_OUTPUT,
             .logic = led->led_status
         };
-        gpio_pin_toggle(&pin);
+        ret = gpio_pin_toggle(&pin);
     }
 
     return ret;

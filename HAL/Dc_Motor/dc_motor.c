@@ -1,7 +1,10 @@
 /* 
  * File:   dc_motor.c
  * Author: Mohamed Sameh
- *
+ * Description:
+ * This source file contains the implementation of functions for controlling a DC motor. 
+ * The functions allow initializing the motor, moving it right, moving it left, and stopping it based on the provided motor configuration.
+ * 
  * Created on August 28, 2023, 4:26 AM
  */
 
@@ -32,7 +35,7 @@ Std_ReturnType dc_motor_init(const dc_motor_t *dc_motor)
             .direction = GPIO_DIRECTION_OUTPUT,
             .logic = dc_motor->dc_motor[DC_MOTOR_PIN1].dc_motor_status
         };
-        gpio_pin_intialize(&pin1);
+        ret = gpio_pin_intialize(&pin1);
 
         pin_config_t pin2 = 
         {
@@ -41,7 +44,7 @@ Std_ReturnType dc_motor_init(const dc_motor_t *dc_motor)
             .direction = GPIO_DIRECTION_OUTPUT,
             .logic = dc_motor->dc_motor[DC_MOTOR_PIN2].dc_motor_status
         };
-        gpio_pin_intialize(&pin2);
+        ret = gpio_pin_intialize(&pin2);
     }
     return ret;
 }
@@ -79,8 +82,8 @@ Std_ReturnType dc_motor_move_right(const dc_motor_t *dc_motor)
             .direction = GPIO_DIRECTION_OUTPUT,
             .logic = dc_motor->dc_motor[DC_MOTOR_PIN2].dc_motor_status
         };
-        gpio_pin_write(&pin1, GPIO_HIGH);
-        gpio_pin_write(&pin2, GPIO_LOW);
+        ret = gpio_pin_write(&pin1, GPIO_HIGH);
+        ret = gpio_pin_write(&pin2, GPIO_LOW);
     }
     return ret;
 }
@@ -118,8 +121,8 @@ Std_ReturnType dc_motor_move_left(const dc_motor_t *dc_motor)
             .direction = GPIO_DIRECTION_OUTPUT,
             .logic = dc_motor->dc_motor[DC_MOTOR_PIN2].dc_motor_status
         };
-        gpio_pin_write(&pin1, GPIO_LOW);
-        gpio_pin_write(&pin2, GPIO_HIGH);
+        ret = gpio_pin_write(&pin1, GPIO_LOW);
+        ret = gpio_pin_write(&pin2, GPIO_HIGH);
     }
     return ret;
 }
@@ -158,8 +161,8 @@ Std_ReturnType dc_motor_stop(const dc_motor_t *dc_motor)
             .logic = dc_motor->dc_motor[DC_MOTOR_PIN2].dc_motor_status
         };
 
-        gpio_pin_write(&pin1, GPIO_LOW);
-        gpio_pin_write(&pin2, GPIO_LOW);
+        ret = gpio_pin_write(&pin1, GPIO_LOW);
+        ret = gpio_pin_write(&pin2, GPIO_LOW);
     }
     return ret;    
 }

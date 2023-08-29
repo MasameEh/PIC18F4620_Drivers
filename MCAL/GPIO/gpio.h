@@ -1,7 +1,13 @@
 /* 
  * File:   gpio.h
  * Author: Mohamed Sameh
- *
+ * 
+ * Description:
+ * This header file provides the interface and data structures for controlling GPIO pins and ports.
+ * The functions defined in this file allow setting the direction, writing logic levels, reading logic levels,
+ * toggling, and initializing GPIO pins and ports. The header also defines various macros and enumerations
+ * for easy manipulation of GPIO pins and ports.
+ * 
  * Created on August 22, 2023, 11:09 PM
  */
 

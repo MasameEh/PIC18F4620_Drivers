@@ -1,7 +1,8 @@
 /* 
  * File:   relay.c
  * Author: Mohamed Sameh
- *
+ * This implementation file provides functions to control a relay using GPIO pins. 
+ * It includes initialization, turning on, and turning off the relay functions.
  * Created on August 27, 2023, 8:58 PM
  */
 
@@ -32,7 +33,7 @@ Std_ReturnType relay_init(const relay_t *relay)
             .direction = GPIO_DIRECTION_OUTPUT,
             .logic = relay->relay_status
         };
-        gpio_pin_intialize(&pin);
+        ret = gpio_pin_intialize(&pin);
     }
 
     return ret;
@@ -63,7 +64,7 @@ Std_ReturnType relay_turn_on(const relay_t *relay)
             .direction = GPIO_DIRECTION_OUTPUT,
             .logic = relay->relay_status
         };
-        gpio_pin_write(&pin, GPIO_HIGH);
+        ret = gpio_pin_write(&pin, GPIO_HIGH);
     }
 
     return ret;
@@ -94,7 +95,7 @@ Std_ReturnType relay_turn_off(const relay_t *relay)
             .direction = GPIO_DIRECTION_OUTPUT,
             .logic = relay->relay_status
         };
-        gpio_pin_write(&pin, GPIO_LOW);
+        ret = gpio_pin_write(&pin, GPIO_LOW);
     }
 
     return ret;

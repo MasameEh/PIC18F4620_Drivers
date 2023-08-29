@@ -1,7 +1,10 @@
 /* 
  * File:   led.h
  * Author: Mohamed Sameh
- *
+ * Description:
+ * This header file defines the interface for controlling LEDs based on a provided LED configuration. 
+ * The LED configuration includes the port, pin, and initial status (ON or OFF) of the LED. The functions defined here allow initializing an LED, turning it on, turning it off, and toggling its state
+ * 
  * Created on August 22, 2023, 11:29 PM
  */
 

@@ -1,7 +1,10 @@
 /* 
  * File:   dc_motor.h
  * Author: Mohamed Sameh
- *
+ * Description:
+ * This header file provides the interface and data structures for controlling a DC motor based on a provided DC motor configuration
+ * It allows the configuration of individual pins and states for controlling the motor's direction and operation.
+ * 
  * Created on August 28, 2023, 4:26 AM
  */
 

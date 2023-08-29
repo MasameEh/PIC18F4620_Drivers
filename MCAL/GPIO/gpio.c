@@ -1,7 +1,13 @@
 /* 
  * File:   gpio.c
  * Author: Mohamed Sameh
- *
+ * 
+ * Description:
+ * This source file provides the implementation of functions for controlling GPIO pins and ports.
+ * These functions allow setting the direction, writing logic levels, reading logic levels, toggling,
+ * and initializing GPIO pins and ports. The functions are designed to work with a configuration structure
+ * and provide an interface for easy manipulation of GPIO pins and ports.
+ * 
  * Created on August 22, 2023, 11:09 PM
  */
 

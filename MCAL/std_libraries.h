@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 /* Section : Macro Declarations */
-#define _XTAL_FREQ 4000000
+
 
 /* Section : Macro Functions Declarations */
 
