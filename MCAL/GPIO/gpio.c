@@ -15,7 +15,7 @@
 /* Reference to data direction control registers */
 volatile uint8 *tris_registers[] = {&TRISA, &TRISB, &TRISC, &TRISD, &TRISE};
 /* Reference to data latch registers (Read and Write to data latch) */
-volatile uint8 *lat_registers[] = {&LATA, &LATC, &LATC, &LATD, &LATE};
+volatile uint8 *lat_registers[] = {&LATA, &LATB, &LATC, &LATD, &LATE};
 /* Reference to port registers */
 volatile uint8 *port_registers[] = {&PORTA, &PORTB, &PORTC, &PORTD, &PORTE};
 
