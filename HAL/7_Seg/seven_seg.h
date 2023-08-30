@@ -41,8 +41,25 @@ typedef struct
 
 
 /* -------------- Functions Declarations --------------*/
+/**
+ * @brief Initializes the seven segment pins to be OUTPUT and turns the pins OFF or on (Start at 0 or 9)
+ * 
+ * @param seg Pointer to the configuration structure for the seven segment.
+ * @return Std_ReturnType Status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType seven_seg_init(const seg_t *seg);
 
+/**
+ * @brief Writes a number to a 7-segment display.
+ * 
+ * @param seg A pointer to the 7-segment configuration structure.
+ * @param number The number (0 to 9) to be displayed.
+ * @return Std_ReturnType Status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType seven_seg_write_number(const seg_t *seg, uint8 number);
 
 #endif	/* 7_SEG_H */
