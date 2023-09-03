@@ -29,10 +29,10 @@ Std_ReturnType seven_seg_init(const seg_t *seg)
     }
     else
     {
-        ret = gpio_pin_intialize(&(seg->seg_pins[SEGMENT_PIN0]));
-        ret = gpio_pin_intialize(&(seg->seg_pins[SEGMENT_PIN1]));
-        ret = gpio_pin_intialize(&(seg->seg_pins[SEGMENT_PIN2]));
-        ret = gpio_pin_intialize(&(seg->seg_pins[SEGMENT_PIN3]));
+        ret = gpio_pin_initialize(&(seg->seg_pins[SEGMENT_PIN0]));
+        ret = gpio_pin_initialize(&(seg->seg_pins[SEGMENT_PIN1]));
+        ret = gpio_pin_initialize(&(seg->seg_pins[SEGMENT_PIN2]));
+        ret = gpio_pin_initialize(&(seg->seg_pins[SEGMENT_PIN3]));
     }
     
 

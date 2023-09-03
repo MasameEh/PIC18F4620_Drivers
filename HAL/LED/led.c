@@ -38,7 +38,7 @@ Std_ReturnType led_init(const led_t *led)
             .direction = GPIO_DIRECTION_OUTPUT,
             .logic = led->led_status
         };
-        ret = gpio_pin_intialize(&pin);
+        ret = gpio_pin_initialize(&pin);
     }
 
     return ret;

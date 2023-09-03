@@ -37,7 +37,7 @@ Std_ReturnType keypad_init(const keypad_t *keypad)
         // Initialize rows as input pins and columns as output pins
         for (rows_counter = ZERO_INIT; rows_counter < KEYPAD_ROWS_NUM; rows_counter++)
         {
-            ret = gpio_pin_intialize(&(keypad->keypad_rows_pins[rows_counter]));
+            ret = gpio_pin_initialize(&(keypad->keypad_rows_pins[rows_counter]));
         }
         for (columns_counter = ZERO_INIT; columns_counter < KEYPAD_COLUMNS_NUM; columns_counter++)
         {

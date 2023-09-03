@@ -35,7 +35,7 @@ Std_ReturnType dc_motor_init(const dc_motor_t *dc_motor)
             .direction = GPIO_DIRECTION_OUTPUT,
             .logic = dc_motor->dc_motor[DC_MOTOR_PIN1].dc_motor_status
         };
-        ret = gpio_pin_intialize(&pin1);
+        ret = gpio_pin_initialize(&pin1);
 
         pin_config_t pin2 = 
         {
@@ -44,7 +44,7 @@ Std_ReturnType dc_motor_init(const dc_motor_t *dc_motor)
             .direction = GPIO_DIRECTION_OUTPUT,
             .logic = dc_motor->dc_motor[DC_MOTOR_PIN2].dc_motor_status
         };
-        ret = gpio_pin_intialize(&pin2);
+        ret = gpio_pin_initialize(&pin2);
     }
     return ret;
 }

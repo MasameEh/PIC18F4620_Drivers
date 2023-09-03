@@ -33,7 +33,7 @@ Std_ReturnType relay_init(const relay_t *relay)
             .direction = GPIO_DIRECTION_OUTPUT,
             .logic = relay->relay_status
         };
-        ret = gpio_pin_intialize(&pin);
+        ret = gpio_pin_initialize(&pin);
     }
 
     return ret;
