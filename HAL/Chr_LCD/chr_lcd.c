@@ -65,7 +65,7 @@ Std_ReturnType lcd_4bit_init(const lcd_4bit_t *lcd)
  * @return Std_ReturnType A status indicating the success or failure of the operation.
  *         - E_OK: The command was sent successfully.
  *         - E_NOT_OK: An error occurred during the operation.
- *
+ */
 Std_ReturnType lcd_4bit_send_cmd(const lcd_4bit_t *lcd, uint8 cmd)
 {
     Std_ReturnType ret = E_OK;
@@ -572,7 +572,7 @@ static Std_ReturnType lcd_4bits_send_enable_signal(const lcd_4bit_t *lcd)
  * @return Std_ReturnType A status indicating the success or failure of the operation.
  *         - E_OK: The enable signal was sent successfully.
  *         - E_NOT_OK: An error occurred during the operation.
- *
+ */
 static Std_ReturnType lcd_8bits_send_enable_signal(const lcd_8bit_t *lcd)
 {
     Std_ReturnType ret = E_OK;
