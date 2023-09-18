@@ -163,7 +163,7 @@ Std_ReturnType gpio_pin_toggle(const pin_config_t *pin);
  *          - E_OK: The operation was successful.
  *          - E_NOT_OK: An error occurred during the operation.
  */
-Std_ReturnType gpio_pin_intialize(const pin_config_t *pin);
+Std_ReturnType gpio_pin_initialize(const pin_config_t *pin);
 
 /**
  * @brief Sets the direction (input or output) of an entire GPIO port.

@@ -202,7 +202,7 @@ Std_ReturnType gpio_pin_toggle(const pin_config_t *pin)
  *          - E_NOT_OK: An error occurred during the operation.
  */
 #if GPIO_PORT_PIN_CONFIGURATION==CONFIG_ENABLE
-Std_ReturnType gpio_pin_intialize(const pin_config_t *pin)
+Std_ReturnType gpio_pin_initialize(const pin_config_t *pin)
 {
     Std_ReturnType ret = E_OK;
 
