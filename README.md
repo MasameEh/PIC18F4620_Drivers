@@ -14,7 +14,7 @@ This repository contains a collection of drivers and hardware abstraction layers
   - [LED](#led)
 - [MCAL (Microcontroller Abstraction Layer)](#mcal-microcontroller-abstraction-layer)
   - [GPIO](#gpio)
-  - [interrupt](interrupt)
+  - [interrupt](#interrupt)
   - [std_libraries.h and std_types.h](#std_librariesh-and-std_typesh)
 - [Application](#application)
 - [Usage](#usage)
