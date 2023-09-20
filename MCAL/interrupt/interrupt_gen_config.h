@@ -11,10 +11,10 @@
 /* -------------- Includes -------------- */
 
 /* -------------- Macro Declarations ------------- */
-#define INTERRUPT_FEATURE_ENABLE                1
-#define INTERRUPT_PRIORITY_LEVELS_ENABLE        INTERRUPT_FEATURE_ENABLE   
-#define EXTERNAL_INTERRUPT_INTx_ENABLE          INTERRUPT_FEATURE_ENABLE  
-#define EXTERNAL_INTERRUPT_ONCHANGE_ENABLE      INTERRUPT_FEATURE_ENABLE 
+#define INTERRUPT_FEATURE_ENABLE                    1
+//#define INTERRUPT_PRIORITY_LEVELS_ENABLE        INTERRUPT_FEATURE_ENABLE   
+#define EXTERNAL_INTERRUPT_INTx_ENABLE            INTERRUPT_FEATURE_ENABLE  
+#define EXTERNAL_INTERRUPT_ONCHANGE_ENABLE        INTERRUPT_FEATURE_ENABLE 
 
 /* -------------- Macro Functions Declarations --------------*/
 

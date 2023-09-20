@@ -66,7 +66,7 @@
 //This macro will disable external interrupt, RBx.
 #define EXT_RBx_DISABLE()              (INTCONbits.RBIE  = 0)
 //This macro will clear external interrupt flag, RBx.
-#define EXT_RBx_FLAG_CLEAR()           (INTCONbits.RBIF   = 0)
+#define EXT_RBx_FLAG_CLEAR()           (INTCONbits.RBIF  = 0)
 
 #if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
 //This macro will set external interrupt (RBx) as high priority.
@@ -103,16 +103,67 @@ typedef struct
 
 typedef struct
 {
-    void (*EXT_InterruptHandler)(void);
+    void (*EXT_InterruptHandler_HIGH)(void);
+    void (*EXT_InterruptHandler_LOW)(void);
     pin_config_t pin;
     interrupt_priority priority;    
 }ext_interrupt_RBx_t;
 
 /* -------------- Functions Declarations --------------*/
+/**
+ * @brief Initializes the external interrupt (INTx) based on the provided configuration.
+ * 
+ * This function configures the external interrupt settings, including enabling or disabling
+ * the interrupt, setting the interrupt edge, configuring the interrupt pin, and specifying
+ * an interrupt handler (callback) function.
+ * 
+ * @param ext_int A pointer to a structure containing the external interrupt configuration.
+ * @return Std_ReturnType
+ *   - E_OK: The external interrupt initialization was successful.
+ *   - E_NOT_OK: The external interrupt initialization failed due to a NULL configuration pointer.
+ */
 Std_ReturnType Interrupt_INTx_Init(const ext_interrupt_INTx_t *ext_int);
+
+/**
+ * @brief Deinitializes the external interrupt (INTx).
+ *
+ * This function disables the specified external interrupt based on the provided configuration.
+ *
+ * @param ext_int A pointer to a structure containing the external interrupt configuration.
+ *
+ * @return Std_ReturnType
+ *   - E_OK: The external interrupt deinitialization was successful.
+ *   - E_NOT_OK: The external interrupt deinitialization failed due to a NULL configuration pointer.
+ */
 Std_ReturnType Interrupt_INTx_DeInit(const ext_interrupt_INTx_t *ext_int);
 
+/**
+ * @brief Initializes the external interrupt (RBx) based on the provided configuration.
+ *
+ * This function configures the external interrupt settings for RBx, including enabling or disabling
+ * the interrupt, setting the interrupt edge, configuring the interrupt pin, specifying the interrupt
+ * priority, and setting an interrupt handler (callback) function.
+ *
+ * @param ext_int A pointer to a structure containing the external interrupt configuration for RBx.
+ *
+ * @return Std_ReturnType
+ *   - E_OK: The external interrupt initialization was successful.
+ *   - E_NOT_OK: The external interrupt initialization failed due to a NULL configuration pointer
+ *               or an invalid pin number.
+ */
 Std_ReturnType Interrupt_RBx_Init(const ext_interrupt_RBx_t *ext_int);
+
+/**
+ * @brief Deinitializes the external interrupt (RBx).
+ *
+ * This function disables the specified external interrupt based on the provided configuration.
+ *
+ * @param ext_int A pointer to a structure containing the external interrupt configuration for RBx.
+ *
+ * @return Std_ReturnType
+ *   - E_OK: The external interrupt deinitialization was successful.
+ *   - E_NOT_OK: The external interrupt deinitialization failed due to a NULL configuration pointer.
+ */
 Std_ReturnType Interrupt_RBx_DeInit(const ext_interrupt_RBx_t *ext_int);
 
 #endif	/* EXTERNAL_INTERRUPT_H */
