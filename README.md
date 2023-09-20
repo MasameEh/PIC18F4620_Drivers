@@ -9,7 +9,7 @@ This repository contains a collection of drivers and hardware abstraction layers
   - [7_Seg](HAL/7_Seg)
   - [Button](HAL/Buttonn)
   - [Chr_LCD](HAL/Chr_LCD)
-  - [Dc_Motor]HAL/Dc_Motorr)
+  - [Dc_Motor](HAL/Dc_Motorr)
   - [Keypad](HAL/Keypad)
   - [LED](HAL/LED)
 - [MCAL (Microcontroller Abstraction Layer)](#mcal-microcontroller-abstraction-layer)
