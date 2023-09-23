@@ -10,7 +10,7 @@
 /* -------------- Includes -------------- */
 #include <pic18f4620.h>
 #include "../std_types.h"
-#include "../interrupt/external_interrupt.h"
+#include "../interrupt/internal_interrupt.h"
 
 /* -------------- Macro Declarations ------------- */
 #define ACCESS_FLASH_MEMORY             1
