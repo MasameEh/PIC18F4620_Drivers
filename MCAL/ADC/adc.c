@@ -5,7 +5,9 @@
  * Created on September 23, 2023, 2:53 AM
  */
 #include "adc.h"
-
+#if ADC_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
+static void (*ADC_InterruptHandler)(void) = NULL;
+#endif
 static inline void ADC_Input_Channel_Pin_Config(adc_channel_t channel);
 static inline void ADC_Select_Result_Format(const adc_config_t *adc);
 static inline void ADC_Select_Volt_Ref(const adc_config_t *adc);
@@ -41,9 +43,25 @@ Std_ReturnType ADC_Init(const adc_config_t *adc)
         ADCON0bits.CHS = adc->channel;
         ADC_Input_Channel_Pin_Config(adc->channel);
         //Configure the interrupt
-
+#if ADC_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
+        INTERRUPT_GlobalInterruptEnable();
+        INTERRUPT_PeripheralInterruptEnable();
+        ADC_INTERRUPT_ENABLE();
+        ADC_INTERRUPT_FLAG_CLEAR();
+#if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
+        if(INTERRUPT_HIGH_PRIORITY == adc->priority)
+        {
+            ADC_INT_HIGH_PRIORITY();
+        }
+        else if(INTERRUPT_LLOW_PRIORITY == adc->priority)
+        {
+            ADC_INT_LOW_PRIORITY();
+        }else{}
+#endif
+        ADC_InterruptHandler = adc->ADC_InterruptHandler;
+#endif
         //Configure the Result format
-        ADC_Select_Result_Format(adc);
+        ADC_Select_Result_Format(adc);  
         //Configure the voltage ref
         ADC_Select_Volt_Ref(adc);
         //
@@ -75,6 +93,10 @@ Std_ReturnType ADC_DeInit(const adc_config_t *adc)
         //Disable the ADC
         ADC_DISABLE();
         //Disable the interrupt
+#if ADC_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
+        ADC_INTERRUPT_DISABLE();
+#endif
+
     }
     return ret;
 }
@@ -94,7 +116,7 @@ Std_ReturnType ADC_Select_Channel(const adc_config_t *adc, adc_channel_t channel
 {
     Std_ReturnType ret = E_OK;
 
-    if (NULL == adc || NULL == channel)
+    if (NULL == adc)
     {
         ret = E_NOT_OK;
     }
@@ -226,27 +248,57 @@ Std_ReturnType ADC_Get_Conversion_Blocking(const adc_config_t *adc, adc_channel_
     return ret;
 }
 
+/**
+ * @brief Perform a blocking ADC conversion.
+ * 
+ * This function selects the ADC channel, starts the conversion, waits until it's completed,
+ * and retrieves the digital result.        
+ * 
+ * @param adc A pointer to the ADC configuration structure.
+ * @param channel The channel to be selected.
+ * @param adc_res A pointer to store the digital result of the conversion.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
+Std_ReturnType ADC_Start_Conversion_Interrupt(const adc_config_t *adc, adc_channel_t channel)
+{
+    Std_ReturnType ret = E_OK;
+    uint8 l_conv_status = ZERO_INIT;
 
+    if (NULL == adc)
+    {
+        ret = E_NOT_OK;
+    }
+    else
+    {
+        //Select the channel
+        ret = ADC_Select_Channel(adc, channel);
+        //Start the ADC
+        ret = ADC_Start(adc);
+    }
+    return ret;
+}
 static inline void ADC_Input_Channel_Pin_Config(adc_channel_t channel)
 {
     //Disable the digital output driver
     switch (channel)
     {
-    case ADC_AN0_ANALOG_FUNCTIONALITY : SET_BIT(TRISA, _TRISA_RA0_POSN); break;
-    case ADC_AN1_ANALOG_FUNCTIONALITY : SET_BIT(TRISA, _TRISA_RA1_POSN); break;
-    case ADC_AN2_ANALOG_FUNCTIONALITY : SET_BIT(TRISA, _TRISA_RA2_POSN); break;
-    case ADC_AN3_ANALOG_FUNCTIONALITY : SET_BIT(TRISA, _TRISA_RA3_POSN); break;
-    case ADC_AN4_ANALOG_FUNCTIONALITY : SET_BIT(TRISA, _TRISA_RA5_POSN); break;
+    case ADC_CHANNEL_AN0 : SET_BIT(TRISA, _TRISA_RA0_POSN); break;
+    case ADC_CHANNEL_AN1 : SET_BIT(TRISA, _TRISA_RA1_POSN); break;
+    case ADC_CHANNEL_AN2 : SET_BIT(TRISA, _TRISA_RA2_POSN); break;
+    case ADC_CHANNEL_AN3 : SET_BIT(TRISA, _TRISA_RA3_POSN); break;
+    case ADC_CHANNEL_AN4 : SET_BIT(TRISA, _TRISA_RA5_POSN); break;
 
-    case ADC_AN5_ANALOG_FUNCTIONALITY : SET_BIT(TRISE, _TRISE_RE0_POSN); break;
-    case ADC_AN6_ANALOG_FUNCTIONALITY : SET_BIT(TRISE, _TRISE_RE1_POSN); break;
-    case ADC_AN7_ANALOG_FUNCTIONALITY : SET_BIT(TRISE, _TRISE_RE2_POSN); break;
+    case ADC_CHANNEL_AN5 : SET_BIT(TRISE, _TRISE_RE0_POSN); break;
+    case ADC_CHANNEL_AN6 : SET_BIT(TRISE, _TRISE_RE1_POSN); break;
+    case ADC_CHANNEL_AN7 : SET_BIT(TRISE, _TRISE_RE2_POSN); break;
 
-    case ADC_AN8_ANALOG_FUNCTIONALITY : SET_BIT(TRISB, _TRISB_RB2_POSN); break;
-    case ADC_AN9_ANALOG_FUNCTIONALITY : SET_BIT(TRISB, _TRISB_RB3_POSN); break;
-    case ADC_AN10_ANALOG_FUNCTIONALITY : SET_BIT(TRISB, _TRISB_RB1_POSN); break;
-    case ADC_AN11_ANALOG_FUNCTIONALITY : SET_BIT(TRISB, _TRISB_RB4_POSN); break;
-    case ADC_AN12_ANALOG_FUNCTIONALITY : SET_BIT(TRISB, _TRISB_RB0_POSN); break;
+    case ADC_CHANNEL_AN8 : SET_BIT(TRISB, _TRISB_RB2_POSN); break;
+    case ADC_CHANNEL_AN9 : SET_BIT(TRISB, _TRISB_RB3_POSN); break;
+    case ADC_CHANNEL_AN10 : SET_BIT(TRISB, _TRISB_RB1_POSN); break;
+    case ADC_CHANNEL_AN11 : SET_BIT(TRISB, _TRISB_RB4_POSN); break;
+    case ADC_CHANNEL_AN12 : SET_BIT(TRISB, _TRISB_RB0_POSN); break;
     default: break;
     }
 }
@@ -261,9 +313,9 @@ static inline void ADC_Select_Result_Format(const adc_config_t *adc)
     {
         ADC_RESULT_LEFT_FORMAT();
     }
-    else ADC_RESULT_RIGHT_FORMAT();
-    
+    else ADC_RESULT_RIGHT_FORMAT(); 
 }
+
 
 static inline void ADC_Select_Volt_Ref(const adc_config_t *adc)
 {
@@ -276,4 +328,21 @@ static inline void ADC_Select_Volt_Ref(const adc_config_t *adc)
         ADC_VOLTAGE_REF_DISABLE();
     }
     else ADC_VOLTAGE_REF_DISABLE();
+}
+
+/**
+ * @brief The ADC interrupt MCAL helper function
+ * 
+ */
+void ADC_ISR(void)
+{
+    //The ADC interrupt occurred, the flag must be cleared.
+    ADC_INTERRUPT_FLAG_CLEAR();
+    /* Code */
+
+    //CallBack func gets called every time this ISR executes.
+    if(ADC_InterruptHandler)
+    {
+        ADC_InterruptHandler();
+    }
 }

@@ -25,6 +25,7 @@ void RB4_ISR(uint8 RB_src);
 void RB5_ISR(uint8 RB_src);
 void RB6_ISR(uint8 RB_src);
 void RB7_ISR(uint8 RB_src);
+void ADC_ISR(void);
 
 #endif	/* INTERRUPT_MANAGER_H */
 

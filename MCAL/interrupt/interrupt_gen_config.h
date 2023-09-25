@@ -11,11 +11,11 @@
 /* -------------- Includes -------------- */
 
 /* -------------- Macro Declarations ------------- */
-#define INTERRUPT_FEATURE_ENABLE                    1
+#define INTERRUPT_FEATURE_ENABLE                    1U
 //#define INTERRUPT_PRIORITY_LEVELS_ENABLE        INTERRUPT_FEATURE_ENABLE   
 #define EXTERNAL_INTERRUPT_INTx_ENABLE            INTERRUPT_FEATURE_ENABLE  
 #define EXTERNAL_INTERRUPT_ONCHANGE_ENABLE        INTERRUPT_FEATURE_ENABLE 
-
+#define ADC_INTERRUPT_ENABLE_FEATURE              INTERRUPT_FEATURE_ENABLE
 /* -------------- Macro Functions Declarations --------------*/
 
 /* -------------- Data Types Declarations --------------  */

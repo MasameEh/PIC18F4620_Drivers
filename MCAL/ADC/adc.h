@@ -36,9 +36,6 @@
 #define ADC_ALL_ANALOG_FUNCTIONALITY    0x00
 #define ADC_ALL_DIGITAL_FUNCTIONALITY   0x0F
 
-#define ADC_RESULT_RIGHT    0x01U
-#define ADC_RESULT_LEFT     0x00U
-
 #define ADC_VOLT_REF_ENABLE   0x01U
 #define ADC_VOLT_REF_DISABLE  0x00U
 
@@ -81,6 +78,16 @@
 #define ADC_RESULT_LEFT_FORMAT()    (ADCON2bits.ADFM = 0)
  
 /* -------------- Data Types Declarations --------------  */
+/**
+ * @brief ADC Digital Result Foramt 
+ * 
+ */
+typedef enum
+{
+    ADC_RESULT_RIGHT = 0,
+    ADC_RESULT_LEFT   
+}adc_res_format_t;
+
 /**
  * @brief Analog Channel Select
  * 
@@ -135,14 +142,23 @@ typedef enum
     ADC_CLOCK_FOSC_DIV_64
 }adc_conversion_clock_t ;
 
+/**
+ * @brief ADC Configuration Structure
+ * 
+ */
 typedef struct
 {
+#if ADC_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
     void (* ADC_InterruptHandler)(void);
+#if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
+    interrupt_priority priority;    
+#endif
+#endif
     adc_acq_time_t acq_time;        /* @ref adc_acq_time_t */
     adc_conversion_clock_t clock;   /* @ref adc_conversion_clock_t */
     adc_channel_t channel;          /* @ref adc_channel_t */
-    uint8 volt_reference : 1;           /* Voltage Reference Configuration */
-    uint8 res_format : 1;           /* A/D Result Format Select */
+    adc_res_format_t res_format;    /* @adc_res_format_t */
+    uint8 volt_reference : 1;       /* Voltage Reference Configuration */
 }adc_config_t;
 
 /* -------------- Functions Declarations --------------*/
@@ -154,6 +170,6 @@ Std_ReturnType ADC_IsDone(const adc_config_t *adc, uint8 *adc_status);
 Std_ReturnType ADC_Get_Result(const adc_config_t *adc, uint16 *adc_res);
 Std_ReturnType ADC_Get_Conversion_Blocking(const adc_config_t *adc, adc_channel_t channel, 
                                   uint16 *adc_res);
-
+Std_ReturnType ADC_Start_Conversion_Interrupt(const adc_config_t *adc, adc_channel_t channel);
 #endif	/* ADC_H */
 

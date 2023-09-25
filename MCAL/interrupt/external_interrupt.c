@@ -45,35 +45,35 @@ static Std_ReturnType Interrupt_INTx_SetInterruptHandler(const ext_interrupt_INT
  *   - E_OK: The external interrupt initialization was successful.
  *   - E_NOT_OK: The external interrupt initialization failed due to a NULL configuration pointer.
  */
-Std_ReturnType Interrupt_INTx_Init(const ext_interrupt_INTx_t *ext_int)
-{
-    Std_ReturnType ret = E_OK;
+    Std_ReturnType Interrupt_INTx_Init(const ext_interrupt_INTx_t *ext_int)
+    {
+        Std_ReturnType ret = E_OK;
 
-    if(NULL == ext_int)
-    {
-        ret = E_NOT_OK;
+        if(NULL == ext_int)
+        {
+            ret = E_NOT_OK;
+        }
+        else 
+        {
+            //Disable the external interrupt.
+            ret = Interrupt_INTx_Disable(ext_int);
+            //Clear the interrupt flag.
+            ret &= Interrupt_INTx_Flag_Clear(ext_int);
+            //Configure the external interrupt edge.
+            ret &= Interrupt_INTx_Edge_Set(ext_int);
+            //Configure the external interrupt pin.
+            ret &= Interrupt_INTx_Pin_Init(ext_int); 
+            //Configure the external interrupt priority.
+#if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
+            ret &= Interrupt_INTx_Priority_Set(ext_int);
+#endif
+            //Configure the interrupt CallBack.
+            ret &= Interrupt_INTx_SetInterruptHandler(ext_int);  
+            //Enable the external interrupt.
+            ret &= Interrupt_INTx_Enable(ext_int);
+        }
+        return ret;
     }
-    else 
-    {
-        //Disable the external interrupt.
-        ret = Interrupt_INTx_Disable(ext_int);
-        //Clear the interrupt flag.
-        ret &= Interrupt_INTx_Flag_Clear(ext_int);
-        //Configure the external interrupt edge.
-        ret &= Interrupt_INTx_Edge_Set(ext_int);
-        //Configure the external interrupt pin.
-        ret &= Interrupt_INTx_Pin_Init(ext_int); 
-        //Configure the external interrupt priority.
-        #if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
-        ret &= Interrupt_INTx_Priority_Set(ext_int);
-        #endif
-        //Configure the interrupt CallBack.
-        ret &= Interrupt_INTx_SetInterruptHandler(ext_int);  
-        //Enable the external interrupt.
-        ret &= Interrupt_INTx_Enable(ext_int);
-    }
-    return ret;
-}
 
 /**
  * @brief Deinitializes the external interrupt (INTx).

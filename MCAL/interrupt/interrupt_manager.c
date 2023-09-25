@@ -108,6 +108,11 @@ void __interrupt() InterruptManager(void)
     }
     /*_________________________ RB6 END _________________________________*/
     /*_________________________ PORTB external on change interrupt end _________________________________*/
+
+    if(INTERRUPT_ENABLE == PIE1bits.ADIE && INTERRUPT_OCCURRED == PIR1bits.ADIF)
+    {
+        ADC_ISR(); /*EXTERNAL INTERRUPT INT0*/
+    }
     
 }
 
