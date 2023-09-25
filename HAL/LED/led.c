@@ -47,7 +47,7 @@ Std_ReturnType led_init(const led_t *led)
 /**
  * @brief Turns on the LED based on the provided LED configuration.
  * 
- * @param led led A pointer to the LED configuration structure.
+ * @param led A pointer to the LED configuration structure.
  * @return Std_ReturnType A status indicating the success or failure of the operation.
  *         - E_OK: The operation was successful.
  *         - E_NOT_OK: An error occurred during the operation.
@@ -78,7 +78,7 @@ Std_ReturnType led_turn_on(const led_t *led)
 /**
  * @brief Turns on the LED based off the provided LED configuration.
  * 
- * @param led led A pointer to the LED configuration structure.
+ * @param led A pointer to the LED configuration structure.
  * @return Std_ReturnType A status indicating the success or failure of the operation.
  *         - E_OK: The operation was successful.
  *         - E_NOT_OK: An error occurred during the operation.
