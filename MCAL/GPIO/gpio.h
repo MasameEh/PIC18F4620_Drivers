@@ -15,7 +15,7 @@
 #define	GPIO_H
 
 /* Section : Includes */
-#include <C:\Program Files\Microchip\MPLABX\v6.00\packs\Microchip\PIC18Fxxxx_DFP\1.3.36\xc8\pic\include\proc\pic18f4620.h>
+#include <pic18f4620.h>
 #include "../std_types.h"
 #include "../device_config.h"
 
