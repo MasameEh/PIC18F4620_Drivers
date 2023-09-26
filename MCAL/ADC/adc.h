@@ -162,14 +162,105 @@ typedef struct
 }adc_config_t;
 
 /* -------------- Functions Declarations --------------*/
+/**
+ * @brief Initializes the ADC based on the provided configuration.
+ * 
+ * This function is called before any other ADC function is called, This function configures
+ * the adc settings, including enabling or disabling the ADC, setting the result format. 
+ * 
+ * @param adc A pointer to the ADC configuration structure.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType ADC_Init(const adc_config_t *adc);
+
+/**
+ * @brief De-Initializes the ADC.
+ * 
+ * @param adc A pointer to the ADC configuration structure.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType ADC_DeInit(const adc_config_t *adc);
+
+/**
+ * @brief Selects the ADC channel for conversion.
+ * 
+ * This function configures the ADC to use the specified channel for analog-to-digital conversion.
+ *
+ * @param adc A pointer to the ADC configuration structure.
+ * @param channel The channel to be selected.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType ADC_Select_Channel(const adc_config_t *adc, adc_channel_t channel);
+
+/**
+ * @brief Starts the ADC.
+ * 
+ * @param adc A pointer to the ADC configuration structure.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType ADC_Start(const adc_config_t *adc);
+
+/**
+ * @brief Indicates whether the conversion is done or not yet.
+ * 
+ * @param adc A pointer to the ADC configuration structure.
+ * @param adc_status A status indicating the conversion status
+ *                   - true : the conversion is complete
+ *                   - false : the conversion is not complete
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType ADC_IsDone(const adc_config_t *adc, uint8 *adc_status);
+
+/**
+ * @brief Retrieves the result of the conversion.
+ * 
+ * @param adc A pointer to the ADC configuration structure.
+ * @param adc_res A pointer to store the digital result of the conversion.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType ADC_Get_Result(const adc_config_t *adc, uint16 *adc_res);
+
+/**
+ * @brief Performs a blocking ADC conversion.
+ * 
+ * This function selects the ADC channel, starts the conversion, waits until it's completed,
+ * and retrieves the digital result.
+ * 
+ * @param adc A pointer to the ADC configuration structure.
+ * @param channel The channel to be selected.
+ * @param adc_res A pointer to store the digital result of the conversion.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType ADC_Get_Conversion_Blocking(const adc_config_t *adc, adc_channel_t channel, 
                                   uint16 *adc_res);
+
+/**
+ * @brief Initiates a non-blocking ADC conversion with interrupt    .
+ * 
+ * This function selects the ADC channel, starts the conversion, 
+ * and enables interrupts to handle the completion of the conversion.        
+ * 
+ * @param adc A pointer to the ADC configuration structure.
+ * @param channel The channel to be selected.
+ * @param adc_res A pointer to store the digital result of the conversion.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType ADC_Start_Conversion_Interrupt(const adc_config_t *adc, adc_channel_t channel);
 #endif	/* ADC_H */
 

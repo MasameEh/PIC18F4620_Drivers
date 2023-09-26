@@ -44,19 +44,23 @@ Std_ReturnType ADC_Init(const adc_config_t *adc)
         ADC_Input_Channel_Pin_Config(adc->channel);
         //Configure the interrupt
 #if ADC_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
-        INTERRUPT_GlobalInterruptEnable();
-        INTERRUPT_PeripheralInterruptEnable();
         ADC_INTERRUPT_ENABLE();
         ADC_INTERRUPT_FLAG_CLEAR();
 #if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
+        INTERRUPT_PriorityLevelsEnable();
         if(INTERRUPT_HIGH_PRIORITY == adc->priority)
         {
+            INTERRUPT_GlobalInterruptHighEnable();
             ADC_INT_HIGH_PRIORITY();
         }
         else if(INTERRUPT_LLOW_PRIORITY == adc->priority)
         {
+            INTERRUPT_GlobalInterruptLowEnable();
             ADC_INT_LOW_PRIORITY();
-        }else{}
+        }else{/* Nothing */}
+#else
+        INTERRUPT_GlobalInterruptEnable();
+        INTERRUPT_PeripheralInterruptEnable();
 #endif
         ADC_InterruptHandler = adc->ADC_InterruptHandler;
 #endif
@@ -64,8 +68,6 @@ Std_ReturnType ADC_Init(const adc_config_t *adc)
         ADC_Select_Result_Format(adc);  
         //Configure the voltage ref
         ADC_Select_Volt_Ref(adc);
-        //
-
         //Enable the ADC
         ADC_ENABLE();
     }
@@ -151,6 +153,7 @@ Std_ReturnType ADC_Start(const adc_config_t *adc)
     }
     return ret;
 }
+
 /**
  * @brief Indicates whether the conversion is done or not yet.
  * 
@@ -213,7 +216,7 @@ Std_ReturnType ADC_Get_Result(const adc_config_t *adc, uint16 *adc_res)
 }
 
 /**
- * @brief Perform a blocking ADC conversion.
+ * @brief Performs a blocking ADC conversion.
  * 
  * This function selects the ADC channel, starts the conversion, waits until it's completed,
  * and retrieves the digital result.
@@ -249,10 +252,10 @@ Std_ReturnType ADC_Get_Conversion_Blocking(const adc_config_t *adc, adc_channel_
 }
 
 /**
- * @brief Perform a blocking ADC conversion.
+ * @brief Initiates a non-blocking ADC conversion with interrupt    .
  * 
- * This function selects the ADC channel, starts the conversion, waits until it's completed,
- * and retrieves the digital result.        
+ * This function selects the ADC channel, starts the conversion, 
+ * interrupts should be enabled to handle the completion of the conversion.        
  * 
  * @param adc A pointer to the ADC configuration structure.
  * @param channel The channel to be selected.
@@ -279,6 +282,12 @@ Std_ReturnType ADC_Start_Conversion_Interrupt(const adc_config_t *adc, adc_chann
     }
     return ret;
 }
+
+/**
+ * @brief Selects channel as input 
+ * 
+ * @param channel The channel to select
+ */
 static inline void ADC_Input_Channel_Pin_Config(adc_channel_t channel)
 {
     //Disable the digital output driver
@@ -303,6 +312,11 @@ static inline void ADC_Input_Channel_Pin_Config(adc_channel_t channel)
     }
 }
 
+/**
+ * @brief Chooses the format of the resault 
+ * 
+ * @param adc A pointer to the ADC configuration structure.
+ */
 static inline void ADC_Select_Result_Format(const adc_config_t *adc)
 {
     if(ADC_RESULT_RIGHT == adc->res_format)
@@ -316,7 +330,11 @@ static inline void ADC_Select_Result_Format(const adc_config_t *adc)
     else ADC_RESULT_RIGHT_FORMAT(); 
 }
 
-
+/**
+ * @brief Selects voltage reference 
+ * 
+ * @param adc A pointer to the ADC configuration structure.
+ */
 static inline void ADC_Select_Volt_Ref(const adc_config_t *adc)
 {
     if(ADC_VOLT_REF_ENABLE == adc->volt_reference)
