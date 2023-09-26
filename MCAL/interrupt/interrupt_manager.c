@@ -36,6 +36,7 @@ void __interrupt(low_priority) InterruptManagerLow(void)
 #else
 void __interrupt() InterruptManager(void)
 {
+    /*_________________________ INTX START _________________________________*/
     if(INTERRUPT_ENABLE == INTCONbits.INT0IE && INTERRUPT_OCCURRED == INTCONbits.INT0IF)
     {
         INT0_ISR(); /*EXTERNAL INTERRUPT INT0*/
@@ -111,7 +112,12 @@ void __interrupt() InterruptManager(void)
 
     if(INTERRUPT_ENABLE == PIE1bits.ADIE && INTERRUPT_OCCURRED == PIR1bits.ADIF)
     {
-        ADC_ISR(); /*EXTERNAL INTERRUPT INT0*/
+        ADC_ISR(); /* ADC INTERRUPT */
+    }
+
+    if(INTERRUPT_ENABLE == INTCONbits.TMR0IE && INTERRUPT_OCCURRED == INTCONbits.TMR0IF)
+    {
+        TMR0_ISR(); /* TIMER0 INTERRUPT */
     }
     
 }
