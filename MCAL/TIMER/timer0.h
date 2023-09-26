@@ -81,9 +81,46 @@ typedef struct
     uint8 timer0_reserved : 4;
 }timer0_t;
 /* -------------- Functions Declarations --------------*/
+/**
+ * @brief Initializes Timer0 based on the provided configuration.
+ * 
+ * @param timer0 A pointer to the Timer0 configuration structure.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType Timer0_Init(const timer0_t *timer0);
+
+/**
+ * @brief De-Initializes the Timer0 Module.
+ * 
+ * @param timer0 A pointer to the Timer0 configuration structure.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType Timer0_DeInit(const timer0_t *timer0);
+
+/**
+ * @brief Writes a 16-bit value to Timer0. 
+ * 
+ * @param timer0 A pointer to the Timer0 configuration structure.
+ * @param val The 16-bit value to write to Timer0.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType Timer0_Write_Value(const timer0_t *timer0, uint16 val);
+
+/**
+ * @brief Reads a 16-bit value from Timer0.
+ * 
+ * @param timer0 A pointer to the Timer0 configuration structure.
+ * @param val A pointer to store the value.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType Timer0_Read(const timer0_t *timer0, uint16 *val);
 
 #endif	/* TIMER0_H */

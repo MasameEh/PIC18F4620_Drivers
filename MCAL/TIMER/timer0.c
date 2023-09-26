@@ -13,10 +13,18 @@ static void (*TMR0_InterruptHandler)(void) = NULL;
 
 static inline void Timer0_Prescaler_Config(const timer0_t *timer0);
 static inline void Timer0_Mode_Select(const timer0_t *timer0);
-static inline void Timer0_Data_Register_Size(const timer0_t *timer0);
+static inline void Timer0_Set_Register_Size(const timer0_t *timer0);
 
 static uint16 preload = ZERO_INIT;
 
+/**
+ * @brief Initializes Timer0 based on the provided configuration.
+ * 
+ * @param timer0 A pointer to the Timer0 configuration structure.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType Timer0_Init(const timer0_t *timer0)
 {
     Std_ReturnType ret = E_OK;
@@ -34,7 +42,7 @@ Std_ReturnType Timer0_Init(const timer0_t *timer0)
         //Select the Timer0 Mode
         Timer0_Mode_Select(timer0);
         //Select the data register size of timer0 (8bits or 16bits)
-        Timer0_Data_Register_Size(timer0);
+        Timer0_Set_Register_Size(timer0);
         //Write preload value if there is.
         TMR0H = (timer0->timer0_preload >> 8);
         TMR0L = (uint8) (timer0->timer0_preload);
@@ -68,6 +76,14 @@ Std_ReturnType Timer0_Init(const timer0_t *timer0)
     return ret;
 }
 
+/**
+ * @brief De-Initializes the Timer0 Module.
+ * 
+ * @param timer0 A pointer to the Timer0 configuration structure.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType Timer0_DeInit(const timer0_t *timer0)
 {
     Std_ReturnType ret = E_OK;
@@ -87,6 +103,15 @@ Std_ReturnType Timer0_DeInit(const timer0_t *timer0)
     return ret;
 }
 
+/**
+ * @brief Writes a 16-bit value to Timer0. 
+ * 
+ * @param timer0 A pointer to the Timer0 configuration structure.
+ * @param val The 16-bit value to write to Timer0.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType Timer0_Write_Value(const timer0_t *timer0, uint16 val)
 {
     Std_ReturnType ret = E_OK;
@@ -103,7 +128,15 @@ Std_ReturnType Timer0_Write_Value(const timer0_t *timer0, uint16 val)
     return ret;
 }
 
-
+/**
+ * @brief Reads a 16-bit value from Timer0.
+ * 
+ * @param timer0 A pointer to the Timer0 configuration structure.
+ * @param val A pointer to store the value.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType Timer0_Read(const timer0_t *timer0, uint16 *val)
 {
     Std_ReturnType ret = E_OK;
@@ -140,6 +173,11 @@ void TMR0_ISR(void)
     }else{/* Nothing */}
 }
 
+/**
+ * @brief Helper function to configure the prescaler value.
+ * 
+ * @param timer0 A pointer to the Timer0 configuration structure.
+ */
 static inline void Timer0_Prescaler_Config(const timer0_t *timer0)
 {
     if(TIMER0_PRESCALER_ENABLE_CFG == timer0->prescaler_status)
@@ -154,6 +192,11 @@ static inline void Timer0_Prescaler_Config(const timer0_t *timer0)
     else{/* Nothing */}
 }
 
+/**
+ * @brief Helper function to select the mode (Timer or Counter).
+ * 
+ * @param timer0 A pointer to the Timer0 configuration structure.
+ */
 static inline void Timer0_Mode_Select(const timer0_t *timer0)
 {
     if(TIMER0_TIMER_MODE == timer0->timer0_mode)
@@ -176,7 +219,12 @@ static inline void Timer0_Mode_Select(const timer0_t *timer0)
     else{/* Nothing */}
 }
 
-static inline void Timer0_Data_Register_Size(const timer0_t *timer0)
+/**
+ * @brief Helper function to configure Timer0 as 8-bits or 16-bits. 
+ * 
+ * @param timer0 A pointer to the Timer0 configuration structure.
+ */
+static inline void Timer0_Set_Register_Size(const timer0_t *timer0)
 {
     if(TIMER0_8BIT_REGISTER_MODE == timer0->timer0_reg_size)
     {
