@@ -487,6 +487,8 @@ Std_ReturnType convert_uint8_to_string(uint8 value, uint8 *str)
 Std_ReturnType convert_uint16_to_string(uint16 value, uint8 *str)
 {
     Std_ReturnType ret = E_OK;
+    uint8 tempStr[6] = {0};
+    uint8 dataCounter = 0;
 
     if(NULL == str)
     {
@@ -494,8 +496,16 @@ Std_ReturnType convert_uint16_to_string(uint16 value, uint8 *str)
     }
     else
     {   
-        memset(str, '\0', 6);
-        sprintf(str, "%u", value);     
+        memset(str, ' ', 5);
+        str[5] = '\0';
+
+        sprintf(tempStr, "%u", value);
+        while (tempStr[dataCounter] != '\0')
+        {
+            str[dataCounter] = tempStr[dataCounter];
+            dataCounter++;
+        }
+             
     }
     return ret;
 }
