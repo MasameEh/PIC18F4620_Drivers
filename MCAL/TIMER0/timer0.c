@@ -48,11 +48,13 @@ Std_ReturnType Timer0_Init(const timer0_t *timer0)
         TMR0L = (uint8) (timer0->timer0_preload);
         //Store the preload value 
         preload = timer0->timer0_preload;
+
         //Configure the interrupt
 #if TIMER0_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
         TIMER0_INTERRUPT_ENABLE();
         TIMER0_INTERRUPT_FLAG_CLEAR();
         TMR0_InterruptHandler = timer0->TMR0_InterruptHandler;
+        //Interrupt priority configurations
 #if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
         INTERRUPT_PriorityLevelsEnable();
         if(INTERRUPT_HIGH_PRIORITY == timer0->priority)
@@ -60,7 +62,7 @@ Std_ReturnType Timer0_Init(const timer0_t *timer0)
             INTERRUPT_GlobalInterruptHighEnable();
             TIMER0_INT_HIGH_PRIORITY();
         }
-        else if(INTERRUPT_LLOW_PRIORITY == timer0->priority)
+        else if(INTERRUPT_LOW_PRIORITY == timer0->priority)
         {
             INTERRUPT_GlobalInterruptLowEnable();
             TIMER0_INT_LOW_PRIORITY();
@@ -94,8 +96,9 @@ Std_ReturnType Timer0_DeInit(const timer0_t *timer0)
     }
     else
     {
-        //Disable the Timer0 Module
+        //Disable Timer0 Module
         TIMER0_MODULE_DISABLE();
+        //Disable Timer0 Interrupt
 #if TIMER0_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
         TIMER0_INTERRUPT_DISABLE();
 #endif
@@ -163,7 +166,7 @@ void TMR0_ISR(void)
 {
     //Timer0 interrupt occurred, the flag must be cleared.
     TIMER0_INTERRUPT_FLAG_CLEAR();
-    //
+    //Write the preload value every time this ISR executes.
     TMR0H = (uint8)(preload >> 8);
     TMR0L = (uint8) (preload);
     //CallBack func gets called every time this ISR executes.

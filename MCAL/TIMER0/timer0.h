@@ -55,6 +55,10 @@
 #define TIMER0_16BIT_REGISTER_MODE_ENABLE()  (T0CONbits.T08BIT = 0)
 
 /* -------------- Data Types Declarations --------------  */
+/**
+ * @brief Timer0 Prescaler values
+ * 
+ */
 typedef enum
 {
     TIMER0_PRESCALER_DIV_2 = 0,
