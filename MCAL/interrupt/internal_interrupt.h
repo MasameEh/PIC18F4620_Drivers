@@ -29,21 +29,69 @@
 #endif
 
 #if TIMER0_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
-//This macro enables the interrupt for timer0 module.
+//This macro enables the interrupt for Timer0 module.
 #define TIMER0_INTERRUPT_ENABLE()      (INTCONbits.TMR0IE = 1)
-//This macro disables the interrupt for timer0 module.
+//This macro disables the interrupt for Timer0 module.
 #define TIMER0_INTERRUPT_DISABLE()     (INTCONbits.TMR0IE = 0)
-//This macro clears the interrupt flag for timer0.
+//This macro clears the interrupt flag for Timer0.
 #define TIMER0_INTERRUPT_FLAG_CLEAR()  (INTCONbits.TMR0IF = 0)
 
 #if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
-//This macro sets timer0 interrupt as high priority.
+//This macro sets Timer0 interrupt as high priority.
 #define TIMER0_INT_HIGH_PRIORITY()      (INTCON2bits.TMR0IP = 1)
-//This macro sets timer0 interrupt as low priority.
+//This macro sets Timer0 interrupt as low priority.
 #define TIMER0_INT_LOW_PRIORITY()       (INTCON2bits.TMR0IP = 0)
 #endif
 #endif
-/* -------------- Macro Functions Declarat  ions --------------*/
+
+#if TIMER1_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
+//This macro enables the interrupt for Timer1 module.
+#define TIMER1_INTERRUPT_ENABLE()      (PIE1bits.TMR1IE = 1)
+//This macro disables the interrupt for Timer1 module.
+#define TIMER1_INTERRUPT_DISABLE()     (PIE1bits.TMR1IE  = 0)
+//This macro clears the interrupt flag for Timer1.
+#define TIMER1_INTERRUPT_FLAG_CLEAR()  (PIR1bits.TMR1IF = 0)
+
+#if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
+//This macro sets Timer1 interrupt as high priority.
+#define TIMER1_INT_HIGH_PRIORITY()      (IPR1bits.TMR1IP = 1)
+//This macro sets Timer1 interrupt as low priority.
+#define TIMER1_INT_LOW_PRIORITY()       (IPR1bits.TMR1IP = 0)
+#endif
+#endif
+
+#if TIMER2_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
+//This macro enables the interrupt for Timer2 module.
+#define TIMER2_INTERRUPT_ENABLE()      (PIE1bits.TMR2IE = 1)
+//This macro disables the interrupt for Timer2 module.
+#define TIMER2_INTERRUPT_DISABLE()     (PIE1bits.TMR2IE  = 0)
+//This macro clears the interrupt flag for Timer2.
+#define TIMER2_INTERRUPT_FLAG_CLEAR()  (PIR1bits.TMR2IF = 0)
+
+#if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
+//This macro sets Timer2 interrupt as high priority.
+#define TIMER2_INT_HIGH_PRIORITY()      (IPR1bits.TMR2IP = 1)
+//This macro sets Timer2 interrupt as low priority.
+#define TIMER2_INT_LOW_PRIORITY()       (IPR1bits.TMR2IP = 0)
+#endif
+#endif
+
+#if TIMER3_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
+//This macro enables the interrupt for Timer3 module.
+#define TIMER3_INTERRUPT_ENABLE()      (PIE2bits.TMR3IE = 1)
+//This macro disables the interrupt for Timer3 module.
+#define TIMER3_INTERRUPT_DISABLE()     (PIE2bits.TMR3IE  = 0)
+//This macro clears the interrupt flag for Timer3.
+#define TIMER3_INTERRUPT_FLAG_CLEAR()  (PIR2bits.TMR3IF = 0)
+
+#if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
+//This macro sets Timer3 interrupt as high priority.
+#define TIMER3_INT_HIGH_PRIORITY()      (IPR2bits.TMR3IP = 1)
+//This macro sets Timer3 interrupt as low priority.
+#define TIMER3_INT_LOW_PRIORITY()       (IPR2bits.TMR3IP = 0)
+#endif
+#endif
+/* -------------- Macro Functions Declarations --------------*/
 
 /* -------------- Data Types Declarations --------------  */
 
