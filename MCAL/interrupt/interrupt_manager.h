@@ -30,5 +30,7 @@ void TMR0_ISR(void);
 void TMR1_ISR(void);
 void TMR2_ISR(void);
 void TMR3_ISR(void);
+void CCP1_ISR(void);
+void CCP2_ISR(void);
 #endif	/* INTERRUPT_MANAGER_H */
 
