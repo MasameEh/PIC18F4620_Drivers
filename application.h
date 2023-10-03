@@ -18,6 +18,12 @@
 #include "HAL/Chr_LCD/chr_lcd.h"
 #include "MCAL/interrupt/external_interrupt.h"
 #include "MCAL/EEPROM/eeprom.h"
+#include "MCAL/ADC/adc.h"
+#include "MCAL/TIMER0/timer0.h"
+#include "MCAL/TIMER1/timer1.h"
+#include "MCAL/TIMER2/timer2.h"
+#include "MCAL/TIMER3/timer3.h"
+#include "MCAL/CCP/ccp.h"
 /* Section : Macro Declarations */
 
 

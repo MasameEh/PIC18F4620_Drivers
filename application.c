@@ -7,7 +7,31 @@
 
 #include "application.h"
 
-led_t led = {.led_status = LED_OFF, .pin = GPIO_PIN0, .port = PORTC_INDEX};
+void TMR3_Defaullt_INTERRUPT(void);
+void CCP1_Defaullt_INTERRUPT(void);
+
+volatile uint8 CCP1_flag;
+
+ccp_t ccp_obj = 
+{
+    .CCP1_InterruptHandler = CCP1_Defaullt_INTERRUPT,
+    .CCPx = CCP1_INST,
+    .mode = CCP_COMPARE_MD,
+    .mode_variant = CCP_COMPARE_MODE_SET_PIN_HIGH,
+    .ccp_timer = CCP1_CCP2_TIMER3,
+    .pin.pin_num = GPIO_PIN2,
+    .pin.port = PORTC_INDEX,
+    .pin.direction = GPIO_DIRECTION_OUTPUT
+}; 
+
+timer3_t timer3 = {
+    .TMR3_InterruptHandler = NULL,
+    .timer3_mode = TIMER3_TIMER_MODE_CFG,
+    .timer3_preload = 0,
+    .prescaler_val = TIMER3_PRESCALER_DIV_1,
+    .timer3_rw_mode = TIMER3_16BITS_RW_MODE_CFG
+};
+
 /*********************************/
 //for real_time_clock
 uint8 hours = 23, minutes = 59, seconds = 50;
@@ -15,21 +39,14 @@ uint8 counter = 0;
 /*********************************/
 Std_ReturnType ret = E_NOT_OK;
 
-uint8 eeprom_val = 0, eeprom_read;
-
 int main() {
     
+    CCP_Compare_Set_Value(&ccp_obj, 37500);
     app_intialize();
-    ret = EEPROM_WriteByte(0x3FF, 0);
+
     while(1)
     {
-        ret = EEPROM_WriteByte(0x3FF, eeprom_val++); 
-        __delay_ms(1000);
-        ret = EEPROM_ReadByte(0x3FF, &eeprom_read);
-        if(5 == eeprom_read)
-        {
-            led_turn_on(&led);
-        }else led_turn_off(&led); 
+
     }
     
     return 0;
@@ -37,10 +54,33 @@ int main() {
 
 void app_intialize(void)
 {
-    led_init(&led);
+    CCP_Init(&ccp_obj);
+    Timer3_Init(&timer3);
 }   
 
+void TMR3_Defaullt_INTERRUPT(void)
+{
 
+}
+
+void CCP1_Defaullt_INTERRUPT(void)
+{
+    Std_ReturnType ret = E_NOT_OK;
+    CCP1_flag++;
+    ret = Timer3_Write_Value(&timer3, 0);
+    
+    if(CCP1_flag == 1)
+    {
+        ret = CCP_Compare_Set_Value(&ccp_obj, 12500);
+        CCP1_SET_MODE(CCP_COMPARE_MODE_SET_PIN_LOW);
+    }
+    else if(CCP1_flag == 2)
+    {
+        ret = CCP_Compare_Set_Value(&ccp_obj, 37500);
+        CCP1_SET_MODE(CCP_COMPARE_MODE_SET_PIN_HIGH);
+        CCP1_flag = 0;
+    }
+}
 
 void real_time_clock()
 {
