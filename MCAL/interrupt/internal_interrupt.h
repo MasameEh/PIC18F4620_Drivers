@@ -123,6 +123,30 @@
 #define CCP2_INT_LOW_PRIORITY()       (IPR2bits.CCP2IP = 0)
 #endif
 #endif
+
+
+//This macro enables the interrupt for EUSART_TX module.
+#define EUSART_TX_INTERRUPT_ENABLE()      (PIE1bits.TXIE = 1)
+//This macro disables the interrupt for EUSART_TX module.
+#define EUSART_TX_INTERRUPT_DISABLE()     (PIE1bits.TXIE  = 0)
+
+//This macro enables the interrupt for EUSART_RX module.
+#define EUSART_RX_INTERRUPT_ENABLE()      (PIE1bits.RCIE = 1)
+//This macro disables the interrupt for EUSART_RX module.
+#define EUSART_RX_INTERRUPT_DISABLE()     (PIE1bits.RCIE  = 0)
+
+#if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
+//This macro sets EUSART_TX interrupt as high priority.
+#define EUSART_TX_INT_HIGH_PRIORITY()      (IPR1bits.TXIP = 1)
+//This macro sets EUSART_TX interrupt as low priority.
+#define EUSART_TX_INT_LOW_PRIORITY()       (IPR1bits.TXIP = 0)
+
+//This macro sets EUSART_RX interrupt as high priority.
+#define EUSART_RX_INT_HIGH_PRIORITY()      (IPR1bits.RCIP = 1)
+//This macro sets EUSART_RX interrupt as low priority.
+#define EUSART_RX_INT_LOW_PRIORITY()       (IPR1bits.RCIP = 0)
+#endif
+
 /* -------------- Macro Functions Declarations --------------*/
 
 /* -------------- Data Types Declarations --------------  */

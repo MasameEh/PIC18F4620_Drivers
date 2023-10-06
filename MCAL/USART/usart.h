@@ -1,6 +1,6 @@
 /* 
  * File:   usart.h
- * Author: DeSkToP
+ * Author: Mohamed Sameh
  *
  * Created on October 5, 2023, 10:26 PM
  */
@@ -52,15 +52,8 @@
 #define EUSART_OVERRUN_ER_CLEAR_CFG       0
 
 /* -------------- Macro Functions Declarations -------------- */
-#define EUSART_TX_INTERRUPT_FLAG_CLEAR()   (PIR1bits.TXIF = 0)
-#define EUSART_RX_INTERRUPT_FLAG_CLEAR()   (PIR1bits.RCIF = 0)
 
-#if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
-//This macro sets EUSART_TX interrupt as high priority.
-#define EUSART_TX_INT_HIGH_PRIORITY()      (IPR1bits.TXIP = 1)
-//This macro sets EUSART_TX interrupt as low priority.
-#define EUSART_TX_INT_LOW_PRIORITY()       (IPR1bits.TXIP = 0)
-#endif
+
 /* -------------- Data Types Declarations ---------------------- */
 
 /**
@@ -126,14 +119,83 @@ typedef struct
     void (* EUSART_TXInterruptHandler)(void);
     void (* EUSART_RXInterruptHandler)(void);
     void (* EUSART_FramingErrorHandler)(void);
-    void (* EUSART_OverrunErrorHandler)(void);
 }usart_t;
 
 /* -------------- Software Interfaces Declarations -------------- */
+/**
+ * @brief  Initializes the EUSART module for asynchronous communication.
+ * 
+ * This function configures and enables the EUSART module based on the provided
+ * configuration structure. Sets the Baud Rate with the desired value, initializes the TX
+ * and RX pins and enables the serial port for communication.
+ * 
+ * @param _usart A pointer to the EUSART Configurations Structure.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType Eusart_Async_Init(const usart_t *_usart);
+
+/**
+ * @brief  De-Initializes the EUSART module for asynchronous communication.
+ * 
+ * 
+ * @param _usart A pointer to the EUSART Configurations Structure.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType Eusart_Async_DeInit(const usart_t *_usart);
-Std_ReturnType Eusart_Async_Send_Blocking(uint8 data);
+
+/**
+ * @brief Sends a char over EUSART communication in a blocking manner.
+ * 
+ * @param data Data to send.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
+Std_ReturnType Eusart_Async_SendByte_Blocking(uint8 data);
+
+/**
+ * @brief Sends a null-terminated string over EUSART communication in a blocking manner.
+ * 
+ * @param str A string to send.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
+Std_ReturnType Eusart_Async_SendString_Blocking(uint8 *data);
+
+/**
+ * @brief Receives a char over EUSART communication in a blocking manner.
+ * 
+ * @param str A pointer to store the received data. 
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType Eusart_Async_Receive_Blocking(uint8 *data);
+
+/**
+ * @brief Receives a char over EUSART communication in a non-blocking manner.
+ * 
+ * @param str A pointer to store the received data. 
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
+Std_ReturnType Eusart_Async_Receive_NonBlocking(uint8 *data);
+
+/**
+ * @brief Sends a char over EUSART communication in a non-blocking manner.
+ * 
+ * @param data Data to send.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
+Std_ReturnType Eusart_Async_SendByte_NonBlocking(uint8 data);
 
 #endif	/* USART_H */
 

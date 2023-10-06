@@ -1,6 +1,6 @@
 /* 
  * File:   usart_cfg.h
- * Author: DeSkToP
+ * Author: Mohamed Sameh
  *
  * Created on October 5, 2023, 10:36 PM
  */

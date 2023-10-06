@@ -115,6 +115,7 @@ void __interrupt() InterruptManager(void)
         ADC_ISR(); /* ADC INTERRUPT */
     }
 
+    /*_________________________ TIMER START _________________________________*/
     if(INTERRUPT_ENABLE == INTCONbits.TMR0IE && INTERRUPT_OCCURRED == INTCONbits.TMR0IF)
     {
         TMR0_ISR(); /* TIMER0 INTERRUPT */
@@ -134,7 +135,8 @@ void __interrupt() InterruptManager(void)
     {
         TMR3_ISR(); /* TIMER3 INTERRUPT */
     }
-
+    /*_________________________ TIMER END _________________________________*/
+    /*_________________________ CCP START _________________________________*/
     if(INTERRUPT_ENABLE == PIE1bits.CCP1IE && INTERRUPT_OCCURRED == PIR1bits.CCP1IF)
     {
         CCP1_ISR(); /* CCP1 INTERRUPT */
@@ -144,8 +146,18 @@ void __interrupt() InterruptManager(void)
     {
         CCP2_ISR(); /* CCP2 INTERRUPT */
     }
-    
-    
+    /*_________________________ CCP END ______________________________________*/
+    /*_________________________ EUSART START _________________________________*/
+    if(INTERRUPT_ENABLE == PIE1bits.TXIE && INTERRUPT_OCCURRED == PIR1bits.TXIF)
+    {
+        EUSART_TX_ISR(); /* EUSART TX INTERRUPT */
+    }
+
+    if(INTERRUPT_ENABLE == PIE1bits.RCIE && INTERRUPT_OCCURRED == PIR1bits.RCIF)
+    {
+        EUSART_RX_ISR(); /* EUSART RX INTERRUPT */
+    }
+    /*_________________________ EUSART END _________________________________*/
 }
 
 #endif

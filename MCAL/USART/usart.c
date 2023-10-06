@@ -1,21 +1,34 @@
 /* 
  * File:   usart.c
- * Author: DeSkToP
+ * Author: Mohamed Sameh
  *
  * Created on October 5, 2023, 10:26 PM
  */
 
 #include "usart.h"
 
-void (* EUSART_TXInterruptHandler)(void);
-void (* EUSART_RXInterruptHandler)(void);
-void (* EUSART_FramingErrorHandler)(void);
-void (* EUSART_OverrunErrorHandler)(void);
+void (*EUSART_TXInterruptHandler)(void) = NULL;
+//Must read the RCREG to clear the flag in ISR.
+void (*EUSART_RXInterruptHandler)(void) = NULL;
+void (*EUSART_FramingErrorHandler)(void) = NULL;
 
 static inline void Eusart_Baudrate_Calc(const usart_t *_usart);
 static inline void Eusart_Async_Tx_Init(const usart_t *_usart);
 static inline void Eusart_Async_Rx_Init(const usart_t *_usart);
+static inline void Eusart_Async_Rx_Restart(void);
 
+/**
+ * @brief  Initializes the EUSART module for asynchronous communication.
+ * 
+ * This function configures and enables the EUSART module based on the provided
+ * configuration structure. Sets the Baud Rate with the desired value, initializes the TX
+ * and RX pins and enables the serial port for communication.
+ * 
+ * @param _usart A pointer to the EUSART Configurations Structure.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType Eusart_Async_Init(const usart_t *_usart)
 {
     Std_ReturnType ret = E_OK;
@@ -42,9 +55,18 @@ Std_ReturnType Eusart_Async_Init(const usart_t *_usart)
     return ret;
 }
 
+/**
+ * @brief  De-Initializes the EUSART module for asynchronous communication.
+ * 
+ * 
+ * @param _usart A pointer to the EUSART Configurations Structure.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType Eusart_Async_DeInit(const usart_t *_usart)
 {
-        Std_ReturnType ret = E_OK;
+    Std_ReturnType ret = E_OK;
 
     if (NULL == _usart)
     {
@@ -52,38 +74,163 @@ Std_ReturnType Eusart_Async_DeInit(const usart_t *_usart)
     }
     else
     {
-
+        //Disable the Serial Port
+        RCSTAbits.SPEN = 0;
+        if(_usart->tx_cfg.usart_tx_interrupt_enable == EUSART_ASYNC_INTERRUPT_TX_ENABLE_CFG)
+        {
+            EUSART_TX_INTERRUPT_DISABLE();
+        }
+        else if(_usart->rx_cfg.usart_rx_interrupt_enable == EUSART_ASYNC_INTERRUPT_RX_ENABLE_CFG)
+        {
+            EUSART_RX_INTERRUPT_DISABLE();
+        }
     }
     return ret;
 }
 
-
-Std_ReturnType Eusart_Async_Send_Blocking( uint8 data)
+/**
+ * @brief Sends a char over EUSART communication in a blocking manner.
+ * 
+ * @param data Data to send.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
+Std_ReturnType Eusart_Async_SendByte_Blocking(uint8 data)
 {
     Std_ReturnType ret = E_OK;
-
-    while(TXSTAbits.TRMT == 0);
+    while(TXSTAbits.TRMT == 0); // waits until shift register is empty
+    EUSART_TX_INTERRUPT_ENABLE();
     TXREG = data;
     return ret;
 }
 
-
-Std_ReturnType Eusart_Async_Receive_Blocking( uint8 *data)
+/**
+ * @brief Sends a null-terminated string over EUSART communication in a blocking manner.
+ * 
+ * @param str A string to send.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
+Std_ReturnType Eusart_Async_SendString_Blocking(uint8 *str)
 {
     Std_ReturnType ret = E_OK;
+    uint8 i = ZERO_INIT;
 
-    if (NULL == data)
+    if(NULL == str)
     {
         ret = E_NOT_OK;
     }
     else
     {
-
+        while(str[i] != '\0')
+        {
+            Eusart_Async_SendByte_Blocking(str[i]);
+            i++;
+        }   
     }
     return ret;
 }
 
+/**
+ * @brief Receives a char over EUSART communication in a blocking manner.
+ * 
+ * @param str A pointer to store the received data. 
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
+Std_ReturnType Eusart_Async_Receive_Blocking(uint8 *data)
+{
+    Std_ReturnType ret = E_OK;
 
+    if(NULL == data)
+    {
+        ret = E_NOT_OK;
+    }
+    else
+    {
+        //Checks if there is an error
+        if(RCSTAbits.OERR == 1)
+        {
+            Eusart_Async_Rx_Restart();
+        }
+        while(!PIR1bits.RCIF);
+        *data = RCREG;
+    }
+    return ret;
+}
+
+/**
+ * @brief Receives a char over EUSART communication in a non-blocking manner.
+ * 
+ * @param str A pointer to store the received data. 
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
+Std_ReturnType Eusart_Async_Receive_NonBlocking(uint8 *data)
+{
+    Std_ReturnType ret = E_OK;
+
+    if(NULL == data)
+    {
+        ret = E_NOT_OK;
+    }
+    else
+    {
+        //Checks if there is an error
+        if(RCSTAbits.OERR == 1)
+        {
+            Eusart_Async_Rx_Restart();
+        }else{/* Nothing */}
+
+        if(1 == PIR1bits.RCIF)
+        {
+            *data = RCREG;
+        }
+        else 
+        {
+            ret = E_NOT_OK;
+        }
+    }
+    return ret;
+}
+
+/**
+ * @brief Sends a char over EUSART communication in a non-blocking manner.
+ * 
+ * @param data Data to send.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
+Std_ReturnType Eusart_Async_SendByte_NonBlocking(uint8 data)
+{
+    Std_ReturnType ret = E_OK;
+
+    if(PIR1bits.TXIF == 1)
+    {
+        EUSART_TX_INTERRUPT_ENABLE();
+        TXREG = data;
+    }
+    else 
+    {
+        ret = E_NOT_OK;
+    }
+    return ret;
+}
+
+/**
+ * @brief Calculates and configures the baud rate for EUSART communication.
+ * 
+  * This function calculates and configures the appropriate baud rate for EUSART communication
+ * based on the provided configuration settings. It supports both asynchronous and synchronous modes,
+ * as well as 8-bit and 16-bit baud rate generators, high and low-speed modes.
+ * 
+ * @param _usart A pointer to the EUSART configuration structure containing baud rate settings.
+ */
 static inline void Eusart_Baudrate_Calc(const usart_t *_usart)
 {
     float32 baudrate_reg_bits = ZERO_INIT;
@@ -152,6 +299,10 @@ static inline void Eusart_Baudrate_Calc(const usart_t *_usart)
     SPBRGH = (uint8)((uint32)baudrate_reg_bits >> 8);
 }
 
+/**
+ * @brief Helper function to set up an Asynchronous Transmission.
+ * 
+ */
 static inline void Eusart_Async_Tx_Init(const usart_t *_usart)
 {
     //Enable TX
@@ -159,11 +310,31 @@ static inline void Eusart_Async_Tx_Init(const usart_t *_usart)
     //Configure the Interrupt
     if(EUSART_ASYNC_INTERRUPT_TX_ENABLE_CFG == _usart->tx_cfg.usart_tx_interrupt_enable)
     {
-        PIE1bits.TXIE = EUSART_ASYNC_INTERRUPT_TX_ENABLE_CFG;
+        //Enable Tx interrupt
+        EUSART_TX_INTERRUPT_ENABLE();
+        EUSART_TXInterruptHandler = _usart->EUSART_TXInterruptHandler;
+
+        //Interrupt priority configurations
+#if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
+        INTERRUPT_PriorityLevelsEnable();
+         if(INTERRUPT_HIGH_PRIORITY == _usart->tx_cfg.priority)
+        {
+            INTERRUPT_GlobalInterruptHighEnable();
+            EUSART_TX_INT_HIGH_PRIORITY();
+        }
+        else if(INTERRUPT_LOW_PRIORITY == _usart->tx_cfg.priority)
+        {
+            INTERRUPT_GlobalInterruptLowEnable();
+            EUSART_TX_INT_LOW_PRIORITY();
+        }else{/* Nothing */}
+#else 
+        INTERRUPT_GlobalInterruptEnable();
+        INTERRUPT_PeripheralInterruptEnable();
+#endif        
     }
     else if(EUSART_ASYNC_INTERRUPT_TX_DISABLE_CFG == _usart->tx_cfg.usart_tx_interrupt_enable)
     {
-        PIE1bits.TXIE = EUSART_ASYNC_INTERRUPT_TX_DISABLE_CFG;
+        EUSART_TX_INTERRUPT_DISABLE();
     }
     else{/* Nothing */}
     //Configure transmitted data size
@@ -178,6 +349,10 @@ static inline void Eusart_Async_Tx_Init(const usart_t *_usart)
     else{/* Nothing */}
 }
 
+/**
+ * @brief Helper function to set up an Asynchronous Reception.
+ * 
+ */
 static inline void Eusart_Async_Rx_Init(const usart_t *_usart)
 {
     //Enable RX
@@ -185,11 +360,31 @@ static inline void Eusart_Async_Rx_Init(const usart_t *_usart)
     //Configure the Interrupt
     if(EUSART_ASYNC_INTERRUPT_RX_ENABLE_CFG == _usart->rx_cfg.usart_rx_interrupt_enable)
     {
-        PIE1bits.RCIE = EUSART_ASYNC_INTERRUPT_RX_ENABLE_CFG;
+        //Enable Rx interrupt
+        EUSART_RX_INTERRUPT_ENABLE();
+        EUSART_RXInterruptHandler = _usart->EUSART_RXInterruptHandler;
+        EUSART_FramingErrorHandler = _usart->EUSART_FramingErrorHandler;
+        //Interrupt priority configurations
+#if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
+        INTERRUPT_PriorityLevelsEnable();
+         if(INTERRUPT_HIGH_PRIORITY == _usart->tx_cfg.priority)
+        {
+            INTERRUPT_GlobalInterruptHighEnable();
+            EUSART_RX_INT_HIGH_PRIORITY();
+        }
+        else if(INTERRUPT_LOW_PRIORITY == _usart->tx_cfg.priority)
+        {
+            INTERRUPT_GlobalInterruptLowEnable();
+            EUSART_RX_INT_LOW_PRIORITY();
+        }else{/* Nothing */}
+#else 
+        INTERRUPT_GlobalInterruptEnable();
+        INTERRUPT_PeripheralInterruptEnable();
+#endif
     }
     else if(EUSART_ASYNC_INTERRUPT_RX_DISABLE_CFG == _usart->rx_cfg.usart_rx_interrupt_enable)
     {
-        PIE1bits.RCIE = EUSART_ASYNC_INTERRUPT_RX_DISABLE_CFG;
+        EUSART_RX_INTERRUPT_DISABLE();
     }
     else{/* Nothing */}
     //Configure the received data size
@@ -204,10 +399,25 @@ static inline void Eusart_Async_Rx_Init(const usart_t *_usart)
     else{/* Nothing */}
 }
 
+/**
+ * @brief Helper function to restart the receiver when there is an error.
+ * 
+ */
+static inline void Eusart_Async_Rx_Restart(void)
+{
+    Std_ReturnType ret = E_OK; 
+    RCSTAbits.CREN = 0;             //If error -> Reset
+    RCSTAbits.CREN = 1;             //If error -> Reset 
+    return ret; 
+}
+
+/**
+ * @brief The EUSART_TX interrupt MCAL helper function
+ * 
+ */
 void EUSART_TX_ISR(void)
 {
-    //Eusart transmit interrupt occurred, the flag must be cleared.
-    EUSART_TX_INTERRUPT_FLAG_CLEAR();
+    EUSART_TX_INTERRUPT_DISABLE();
     //CallBack func gets called every time this ISR executes.
     if(EUSART_TXInterruptHandler)
     {
@@ -215,13 +425,19 @@ void EUSART_TX_ISR(void)
     }else{/* Nothing */}
 }
 
+/**
+ * @brief The EUSART_RX interrupt MCAL helper function
+ * 
+ */
 void EUSART_RX_ISR(void)
 {
-    //Eusart transmit interrupt occurred, the flag must be cleared.
-    EUSART_RX_INTERRUPT_FLAG_CLEAR();
     //CallBack func gets called every time this ISR executes.
     if(EUSART_RXInterruptHandler)
     {
         EUSART_RXInterruptHandler();
+    }else{/* Nothing */}
+    if(EUSART_FramingErrorHandler)
+    {
+        EUSART_FramingErrorHandler();
     }else{/* Nothing */}
 }
