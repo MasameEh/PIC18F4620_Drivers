@@ -7,46 +7,61 @@
 
 #include "application.h"
 
-void TMR3_Defaullt_INTERRUPT(void);
-void CCP1_Defaullt_INTERRUPT(void);
 
-volatile uint8 CCP1_flag;
+volatile uint8 validation = 0 , validation1;
+volatile uint8 read;
 
-ccp_t ccp_obj = 
+led_t led = {.led_status = LED_OFF, .pin = GPIO_PIN0, .port = PORTC_INDEX};
+
+void EUSART_RX_InterruptHandler()
 {
-    .CCP1_InterruptHandler = CCP1_Defaullt_INTERRUPT,
-    .CCPx = CCP1_INST,
-    .mode = CCP_COMPARE_MD,
-    .mode_variant = CCP_COMPARE_MODE_SET_PIN_HIGH,
-    .ccp_timer = CCP1_CCP2_TIMER3,
-    .pin.pin_num = GPIO_PIN2,
-    .pin.port = PORTC_INDEX,
-    .pin.direction = GPIO_DIRECTION_OUTPUT
-}; 
+   validation1++;
+   Eusart_Async_Receive_NonBlocking(&read);
+   switch (read)
+   {
+   case 'a': led_turn_on(&led); 
+             Eusart_Async_SendString_Blocking("Led is on\r"); break;
+   case 'b': led_turn_off(&led); 
+             Eusart_Async_SendString_Blocking("Led is off\r"); break;
+   default:
+        led_turn_off(&led);
+       break;
+   }
+}
 
-timer3_t timer3 = {
-    .TMR3_InterruptHandler = NULL,
-    .timer3_mode = TIMER3_TIMER_MODE_CFG,
-    .timer3_preload = 0,
-    .prescaler_val = TIMER3_PRESCALER_DIV_1,
-    .timer3_rw_mode = TIMER3_16BITS_RW_MODE_CFG
+void EUSART_TX_InterruptHandler()
+{
+    validation++;
+}
+usart_t o = 
+{
+    .baudrate = 9600,
+    .baudrate_generator = EUSART_ASYNC_8BITS_LOW_SPEED_BAUDRATE,
+
+    .tx_cfg.usart_tx_9bits_enable = EUSART_8BITS_TX_CFG,
+    .tx_cfg.usart_tx_interrupt_enable = EUSART_ASYNC_INTERRUPT_TX_ENABLE_CFG,
+
+    .rx_cfg.usart_rx_9bits_enable = EUSART_8BITS_RX_CFG,
+    .rx_cfg.usart_rx_interrupt_enable = EUSART_ASYNC_INTERRUPT_RX_DISABLE_CFG,
+    .EUSART_RXInterruptHandler = EUSART_RX_InterruptHandler,
+    .EUSART_TXInterruptHandler = EUSART_TX_InterruptHandler
 };
 
-/*********************************/
-//for real_time_clock
-uint8 hours = 23, minutes = 59, seconds = 50;
-uint8 counter = 0;
-/*********************************/
+
+
 Std_ReturnType ret = E_NOT_OK;
+
 
 int main() {
     
-    CCP_Compare_Set_Value(&ccp_obj, 37500);
+    
     app_intialize();
+
 
     while(1)
     {
-
+        Eusart_Async_SendByte_NonBlocking('a');
+        __delay_ms(500);
     }
     
     return 0;
@@ -54,77 +69,8 @@ int main() {
 
 void app_intialize(void)
 {
-    CCP_Init(&ccp_obj);
-    Timer3_Init(&timer3);
+    Eusart_Async_Init(&o);
+    led_init(&led);
 }   
 
-void TMR3_Defaullt_INTERRUPT(void)
-{
 
-}
-
-void CCP1_Defaullt_INTERRUPT(void)
-{
-    Std_ReturnType ret = E_NOT_OK;
-    CCP1_flag++;
-    ret = Timer3_Write_Value(&timer3, 0);
-    
-    if(CCP1_flag == 1)
-    {
-        ret = CCP_Compare_Set_Value(&ccp_obj, 12500);
-        CCP1_SET_MODE(CCP_COMPARE_MODE_SET_PIN_LOW);
-    }
-    else if(CCP1_flag == 2)
-    {
-        ret = CCP_Compare_Set_Value(&ccp_obj, 37500);
-        CCP1_SET_MODE(CCP_COMPARE_MODE_SET_PIN_HIGH);
-        CCP1_flag = 0;
-    }
-}
-
-void real_time_clock()
-{
-    
-    gpio_port_set_direction(PORTC_INDEX, 0xF0);
-    gpio_port_set_direction(PORTD_INDEX, 0xC0);
-
-    for(counter = 0; counter < 50; counter++)
-        {
-            ret = gpio_port_write(PORTD_INDEX, 0x3E);
-            ret = gpio_port_write(PORTC_INDEX, (uint8)(hours/10));
-            __delay_us(3333);
-            ret = gpio_port_write(PORTD_INDEX, 0x3D);
-            ret = gpio_port_write(PORTC_INDEX, (uint8)(hours%10));
-            __delay_us(3333);
-            ret = gpio_port_write(PORTD_INDEX, 0x3B);
-            ret = gpio_port_write(PORTC_INDEX, (uint8)(minutes/10));
-            __delay_us(3333);
-            ret = gpio_port_write(PORTD_INDEX, 0x37);
-            ret = gpio_port_write(PORTC_INDEX, (uint8)(minutes%10));
-            __delay_us(3333);
-            ret = gpio_port_write(PORTD_INDEX, 0x2F);
-            ret = gpio_port_write(PORTC_INDEX, (uint8)(seconds/10));
-            __delay_us(3333);
-            ret = gpio_port_write(PORTD_INDEX, 0x1F);
-            ret = gpio_port_write(PORTC_INDEX, (uint8)(seconds%10));
-            __delay_us(3333);
-        }
-        seconds++;
-        if(seconds == 60)
-        {
-            seconds = 0;
-            minutes++;
-        }
-
-        if(minutes == 60)
-        {
-            minutes = 0;
-            hours++;
-        }
-
-        if(hours == 24)
-        {
-            hours = 0;
-        }
-
-}

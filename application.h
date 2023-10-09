@@ -24,6 +24,8 @@
 #include "MCAL/TIMER2/timer2.h"
 #include "MCAL/TIMER3/timer3.h"
 #include "MCAL/CCP/ccp.h"
+#include "MCAL/USART/usart.h"
+#include "MCAL/SPI/spi.h"
 /* Section : Macro Declarations */
 
 
