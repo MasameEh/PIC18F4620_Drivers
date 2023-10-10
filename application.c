@@ -12,39 +12,17 @@ volatile uint8 validation = 0 , validation1;
 volatile uint8 read;
 
 led_t led = {.led_status = LED_OFF, .pin = GPIO_PIN0, .port = PORTC_INDEX};
-
-void EUSART_RX_InterruptHandler()
+pin_config_t ss1_pin = { .pin_num = GPIO_PIN0, .port = PORTD_INDEX, .logic = GPIO_HIGH, .direction = GPIO_DIRECTION_OUTPUT};
+void SPI__InterruptHandler()
 {
-   validation1++;
-   Eusart_Async_Receive_NonBlocking(&read);
-   switch (read)
-   {
-   case 'a': led_turn_on(&led); 
-             Eusart_Async_SendString_Blocking("Led is on\r"); break;
-   case 'b': led_turn_off(&led); 
-             Eusart_Async_SendString_Blocking("Led is off\r"); break;
-   default:
-        led_turn_off(&led);
-       break;
-   }
+
 }
 
-void EUSART_TX_InterruptHandler()
-{
-    validation++;
-}
-usart_t o = 
-{
-    .baudrate = 9600,
-    .baudrate_generator = EUSART_ASYNC_8BITS_LOW_SPEED_BAUDRATE,
-
-    .tx_cfg.usart_tx_9bits_enable = EUSART_8BITS_TX_CFG,
-    .tx_cfg.usart_tx_interrupt_enable = EUSART_ASYNC_INTERRUPT_TX_ENABLE_CFG,
-
-    .rx_cfg.usart_rx_9bits_enable = EUSART_8BITS_RX_CFG,
-    .rx_cfg.usart_rx_interrupt_enable = EUSART_ASYNC_INTERRUPT_RX_DISABLE_CFG,
-    .EUSART_RXInterruptHandler = EUSART_RX_InterruptHandler,
-    .EUSART_TXInterruptHandler = EUSART_TX_InterruptHandler
+spi_t spi_master = {
+    .mode = SPI_MASTER_FOSC_DIV_16,
+    .master_sample = SPI_MASTER_SAMPLE_MIDDLE_CFG,
+    .master_waveform = SPI_CLK_IDLE_LOW_TX_LEADING_RISING,
+    .SPI_InterruptHandler = SPI__InterruptHandler
 };
 
 
@@ -56,20 +34,25 @@ int main() {
     
     
     app_intialize();
-
+    ret = SPI_Master_Init(&spi_master);
+    ret = gpio_pin_initialize(&ss1_pin);
 
     while(1)
     {
-        Eusart_Async_SendByte_NonBlocking('a');
-        __delay_ms(500);
+        // ret = gpio_pin_write(&ss1_pin, GPIO_LOW);
+        ret = SPI_Master_Transceiver('A', &ss1_pin, &read);
+        if(read == 'A')
+        {
+            led_toggle(&led);
+        }
+        // ret = gpio_pin_write(&ss1_pin, GPIO_HIGH);
+        __delay_ms(1000);
     }
-    
     return 0;
 }
 
 void app_intialize(void)
 {
-    Eusart_Async_Init(&o);
     led_init(&led);
 }   
 
