@@ -111,7 +111,7 @@ typedef union
 
 typedef struct
 {
-    uint32_t baudrate;                          // Desired Baud Rate
+    uint32 baudrate;                          // Desired Baud Rate
     usart_baudrate_gen_t baudrate_generator;          // @ref usart_baudrate_gen_t
     usart_tx_cfg_t tx_cfg;                      // @ref usart_tx_cfg_t
     usart_rx_cfg_t rx_cfg;                      // @ref usart_rx_cfg_t

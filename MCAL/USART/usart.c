@@ -404,11 +404,9 @@ static inline void Eusart_Async_Rx_Init(const usart_t *_usart)
  * 
  */
 static inline void Eusart_Async_Rx_Restart(void)
-{
-    Std_ReturnType ret = E_OK; 
+{ 
     RCSTAbits.CREN = 0;             //If error -> Reset
     RCSTAbits.CREN = 1;             //If error -> Reset 
-    return ret; 
 }
 
 /**
