@@ -14,8 +14,8 @@
 /* -------------- Macro Declarations ------------- */
 #define INTERRUPT_ENABLE                    1
 #define INTERRUPT_DISABLE                   0
-#define INTERRUPT_OCCURRED                   1
-#define INTERRUPT_UNOCCURED                 0
+#define INTERRUPT_OCCURRED                  1
+#define INTERRUPT_UNOCCURRED                0
    
 #define INTERRUPT_PRIORITY_ENABLE           1
 #define INTERRUPT_PRIORITY_DISABLE          0

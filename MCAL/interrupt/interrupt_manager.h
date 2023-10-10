@@ -35,5 +35,7 @@ void CCP2_ISR(void);
 
 void EUSART_TX_ISR(void);
 void EUSART_RX_ISR(void);
+
+void SPI_ISR(void);
 #endif	/* INTERRUPT_MANAGER_H */
 

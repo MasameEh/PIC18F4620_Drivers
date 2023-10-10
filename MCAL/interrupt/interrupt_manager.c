@@ -158,6 +158,14 @@ void __interrupt() InterruptManager(void)
         EUSART_RX_ISR(); /* EUSART RX INTERRUPT */
     }
     /*_________________________ EUSART END _________________________________*/
+    /*_________________________ SPI START _________________________________*/
+    if(INTERRUPT_ENABLE == PIE1bits.SSPIE && INTERRUPT_OCCURRED == PIR1bits.SSPIF)
+    {
+        SPI_ISR(); /* SPI INTERRUPT */
+    }
+    /*_________________________ SPI END _________________________________*/
+
+
 }
 
 #endif

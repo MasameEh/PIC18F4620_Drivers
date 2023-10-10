@@ -124,6 +124,21 @@
 #endif
 #endif
 
+#if SPI_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
+//This macro enables the interrupt for SPI module.
+#define SPI_INTERRUPT_ENABLE()      (PIE1bits.SSPIE = 1)
+//This macro disables the interrupt for SPI module.
+#define SPI_INTERRUPT_DISABLE()     (PIE1bits.SSPIE  = 0)
+//This macro clears the interrupt flag for SPI.
+#define SPI_INTERRUPT_FLAG_CLEAR()  (PIR1bits.SSPIF = 0)
+
+#if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
+//This macro sets SPI interrupt as high priority.
+#define SPI_INT_HIGH_PRIORITY()      (IPR1bits.SSPIP = 1)
+//This macro sets SPI interrupt as low priority.
+#define SPI_INT_LOW_PRIORITY()       (IPR1bits.SSPIP = 0)
+#endif
+#endif
 
 //This macro enables the interrupt for EUSART_TX module.
 #define EUSART_TX_INTERRUPT_ENABLE()      (PIE1bits.TXIE = 1)

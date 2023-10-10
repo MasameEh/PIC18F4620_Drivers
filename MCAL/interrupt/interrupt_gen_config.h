@@ -26,6 +26,7 @@
 #define CCP1_INTERRUPT_ENABLE_FEATURE             INTERRUPT_FEATURE_ENABLE
 #define CCP2_INTERRUPT_ENABLE_FEATURE             INTERRUPT_FEATURE_ENABLE
 
+#define SPI_INTERRUPT_ENABLE_FEATURE             INTERRUPT_FEATURE_ENABLE
 /* -------------- Macro Functions Declarations --------------*/
 
 /* -------------- Data Types Declarations --------------  */
