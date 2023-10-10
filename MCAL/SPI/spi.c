@@ -19,9 +19,9 @@ static Std_ReturnType inline SPI_Master_WaveForm_Select(const spi_t *_spi);
  * @brief Initializes the SPI Master based on the provided configuration.
  * 
  * This function enables serial port and configures SCK, SDO and SS as outputs and serial port pins,
- * selects the sample postion of thc clock and the waveform (clock polairty and edge to latch data).
+ * selects the sample position of the clock and the waveform (clock polairty and edge to latch data).
  * 
- * @param _spi A pointer the SPI configuration structure (spi_t).
+ * @param _spi A pointer to the SPI configuration structure (spi_t).
  * @return Std_ReturnType A status indicating the success or failure of the operation.
  *         - E_OK: The operation was successful.
  *         - E_NOT_OK: An error occurred during the operation.
@@ -84,7 +84,7 @@ Std_ReturnType SPI_Master_Init(const spi_t *_spi)
 /**
  * @brief Initializes the SPI Slave based on the provided configuration.
  * 
- * @param _spi A pointer the SPI configuration structure (spi_t).
+ * @param _spi A pointer to the SPI configuration structure (spi_t).
  * @return Std_ReturnType A status indicating the success or failure of the operation.
  *         - E_OK: The operation was successful.
  *         - E_NOT_OK: An error occurred during the operation.
@@ -126,19 +126,38 @@ Std_ReturnType SPI_Slave_Init(const spi_t *_spi)
 }
 
 /**
- * @brief Trasmits the data from a master to slave in a blocking manner.
+ * @brief Transmits data via SPI and receives data from the communication partner.
+ *  
+ * If the master is going to use this function, 
+ * it should select which slave to communicate in the application code. 
+ * There is no slave select pin as parameter. 
+ * 
+ * @param data Data to be transmitted.
+ * @return uint8 The received data.
+ */
+uint8 SPI_Transfer_data(uint8 data)
+{
+    SSPBUF = data;
+    // Wait until the opertaion is complete.
+    while(!SPI_RECEIVE_STATUS());
+    return SSPBUF;
+}
+
+/**
+ * @brief A master trasmit and receive data from a slave.
  * 
  * @param data Data to transmit.
- * @param slave_select  A pointer to the slave select pin for communication.
+ * @param rec_data A pointer to store the received data.
+ * @param slave_select A pointer to the slave select pin for communication.
  * @return Std_ReturnType A status indicating the success or failure of the operation.
  *         - E_OK: The operation was successful.
  *         - E_NOT_OK: An error occurred during the operation.
  */
-Std_ReturnType SPI_Master_Trasnmit(const uint8 data, pin_config_t *slave_select)
+Std_ReturnType SPI_Master_Transceiver(const uint8 data, pin_config_t *slave_select, uint8 *rec_data)
 {
     Std_ReturnType ret = E_OK;
-    uint8 data_flush = ZERO_INIT;
     gpio_pin_initialize(slave_select);
+
     if(NULL == slave_select)
     {
         ret = E_NOT_OK;
@@ -146,18 +165,14 @@ Std_ReturnType SPI_Master_Trasnmit(const uint8 data, pin_config_t *slave_select)
     else
     {
         gpio_pin_write(slave_select, GPIO_LOW);
-#if SPI_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
-        SPI_INTERRUPT_ENABLE();
-#endif
         SSPBUF = data;
         if(SPI_TRANSMIT_COLLISION_CHECK() == SPI_WRITE_COLLISION_OCCURRED)
         {
             SPI_TRANSMIT_COLLISION_CLEAR();
             SSPBUF = data;
         }
-        while(!PIR1bits.SSPIF);
-        SPI_INTERRUPT_FLAG_CLEAR();
-        data_flush = SSPBUF;
+        while(!SPI_RECEIVE_STATUS());
+        *rec_data = SSPBUF;
         gpio_pin_write(slave_select, GPIO_HIGH);
     }
     return ret;
@@ -165,6 +180,7 @@ Std_ReturnType SPI_Master_Trasnmit(const uint8 data, pin_config_t *slave_select)
 
 /**
  * @brief Receives the data from a slave in a blocking manner.
+ *  disables the trasmission (Master in only Receive mode).
  * 
  * @param Rec_data A pointer to store the received data.
  * @param slave_select A pointer to the slave select pin for communication.
@@ -184,51 +200,15 @@ Std_ReturnType SPI_Master_Recieve(uint8 *Rec_data, pin_config_t *slave_select)
     else
     {
         gpio_pin_write(slave_select, GPIO_LOW);
-#if SPI_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
-        SPI_INTERRUPT_ENABLE();
-#endif
         //SDO INPUT (Disable spi transmiting)
         TRISCbits.RC5 = GPIO_DIRECTION_INPUT;
         SSPBUF = 0;
         while(!SPI_RECEIVE_STATUS());
-        SPI_INTERRUPT_FLAG_CLEAR();
         *Rec_data = SSPBUF;
         //SDO OUTPUT (Enable spi transmiting)
         TRISCbits.RC5 = GPIO_DIRECTION_OUTPUT;
         gpio_pin_write(slave_select, GPIO_HIGH);
     }
-    return ret;
-}
-
-/**
- * @brief Transmits data from a slave to a master.
- * 
- * @param data Data to transmit.
- * @return Std_ReturnType A status indicating the success or failure of the operation.
- *         - E_OK: The operation was successful.
- *         - E_NOT_OK: An error occurred during the operation.
- */
-Std_ReturnType SPI_Slave_Transmit(uint8 data)
-{
-    Std_ReturnType ret = E_OK;
-    uint8 data_flush = ZERO_INIT;
-    SSPBUF = data;
-    data_flush = SSPBUF;
-    return ret;
-}
-
-/**
- * @brief Receives data from a master.
- * 
- * @param data A pointer to store the received data.
- * @return Std_ReturnType A status indicating the success or failure of the operation.
- *         - E_OK: The operation was successful.
- *         - E_NOT_OK: An error occurred during the operation.
- */
-Std_ReturnType SPI_Slave_Receive(uint8 *data)
-{
-    Std_ReturnType ret = E_OK;
-    *data = SSPBUF;
     return ret;
 }
 
@@ -264,7 +244,7 @@ Std_ReturnType SPI_DiInit(const spi_t *_spi)
 void SPI_ISR(void)
 {
     //SPI interrupt occurred, the flag must be cleared.
-    SPI_INTERRUPT_DISABLE();
+    SPI_INTERRUPT_FLAG_CLEAR();
     //CallBack func gets called every time this ISR executes.
     if(SPI_InterruptHandler)
     {

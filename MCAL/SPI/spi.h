@@ -114,28 +114,6 @@ typedef struct
 Std_ReturnType SPI_Master_Init(const spi_t *_spi);
 
 /**
- * @brief Trasmits the data from a master to slave in a blocking manner.
- * 
- * @param data Data to transmit.
- * @param slave_select  A pointer to the slave select pin for communication.
- * @return Std_ReturnType A status indicating the success or failure of the operation.
- *         - E_OK: The operation was successful.
- *         - E_NOT_OK: An error occurred during the operation.
- */
-Std_ReturnType SPI_Master_Trasnmit(const uint8 data, pin_config_t *slave_select);
-
-/**
- * @brief Receives the data from a slave in a blocking manner.
- * 
- * @param Rec_data A pointer to store the received data.
- * @param slave_select A pointer to the slave select pin for communication.
- * @return Std_ReturnType A status indicating the success or failure of the operation.
- *         - E_OK: The operation was successful.
- *         - E_NOT_OK: An error occurred during the operation.
- */
-Std_ReturnType SPI_Master_Recieve(uint8 *Rec_data, pin_config_t *slave_select);
-
-/**
  * @brief Initializes the SPI Slave based on the provided configuration.
  * 
  * @param _spi A pointer the SPI configuration structure (spi_t).
@@ -146,24 +124,39 @@ Std_ReturnType SPI_Master_Recieve(uint8 *Rec_data, pin_config_t *slave_select);
 Std_ReturnType SPI_Slave_Init(const spi_t *_spi);
 
 /**
- * @brief Transmits data from a slave to a master.
+ * @brief Transmits data via SPI and receives data from the communication partner.
+ *  
+ * If the master is going to use this function, it should select which slave to communicate in the application code. 
+ * There is no slave select pin as parameter. 
  * 
- * @param data Data to transmit.
- * @return Std_ReturnType A status indicating the success or failure of the operation.
- *         - E_OK: The operation was successful.
- *         - E_NOT_OK: An error occurred during the operation.
+ * @param data Data to be transmitted.
+ * @return uint8 The received data.
  */
-Std_ReturnType SPI_Slave_Transmit(uint8 data);
+uint8 SPI_Transfer_data(uint8 data);
 
 /**
- * @brief Receives data from a master.
+ * @brief A master transmits and receives data from a slave.
  * 
- * @param data A pointer to store the received data.
+ * @param data Data to transmit.
+ * @param rec_data A pointer to store the received data.
+ * @param slave_select A pointer to the slave select pin for communication.
  * @return Std_ReturnType A status indicating the success or failure of the operation.
  *         - E_OK: The operation was successful.
  *         - E_NOT_OK: An error occurred during the operation.
  */
-Std_ReturnType SPI_Slave_Receive(uint8 *data);
+Std_ReturnType SPI_Master_Transceiver(const uint8 data, pin_config_t *slave_select, uint8 *rec_data);
+
+/**
+ * @brief Receives the data from a slave in a blocking manner and 
+ *  disables the trasmission (Master in only Receive mode).
+ * 
+ * @param Rec_data A pointer to store the received data.
+ * @param slave_select A pointer to the slave select pin for communication.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
+Std_ReturnType SPI_Master_Recieve(uint8 *Rec_data, pin_config_t *slave_select);
 
 /**
  * @brief De-Initializes the SPI module.
