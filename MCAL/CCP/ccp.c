@@ -410,12 +410,12 @@ if(CCP1_INST == _ccp->CCPx)
         //Interrupt priority configurations
 #if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
     INTERRUPT_PriorityLevelsEnable();
-    if(INTERRUPT_HIGH_PRIORITY == CCP1->CCP1_priority)
+    if(INTERRUPT_HIGH_PRIORITY == _ccp->CCP1_priority)
     {
         INTERRUPT_GlobalInterruptHighEnable();
         CCP1_INT_HIGH_PRIORITY();
     }
-    else if(INTERRUPT_LOW_PRIORITY == CCP1->CCP1_priority)
+    else if(INTERRUPT_LOW_PRIORITY == _ccp->CCP1_priority)
     {
         INTERRUPT_GlobalInterruptLowEnable();
         CCP1_INT_LOW_PRIORITY();
@@ -436,12 +436,12 @@ else if (CCP2_INST == _ccp->CCPx)
     //Interrupt priority configurations
 #if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
     INTERRUPT_PriorityLevelsEnable();
-    if(INTERRUPT_HIGH_PRIORITY == CCP2->CCP2_priority)
+    if(INTERRUPT_HIGH_PRIORITY == _ccp->CCP2_priority)
     {
         INTERRUPT_GlobalInterruptHighEnable();
         CCP2_INT_HIGH_PRIORITY();
     }
-    else if(INTERRUPT_LOW_PRIORITY == CCP2->CCP2_priority)
+    else if(INTERRUPT_LOW_PRIORITY == _ccp->CCP2_priority)
     {
         INTERRUPT_GlobalInterruptLowEnable();
         CCP2_INT_LOW_PRIORITY();

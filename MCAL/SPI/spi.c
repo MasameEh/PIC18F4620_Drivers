@@ -39,12 +39,9 @@ Std_ReturnType SPI_Master_Init(const spi_t *_spi)
         //Disable SPI
         SPI_DISABLE();
         /* Initialize pins */
-        //SDO
-        TRISCbits.RC5 = GPIO_DIRECTION_OUTPUT;
-        //SCK
-        TRISCbits.RC3 = GPIO_DIRECTION_OUTPUT;
-        //SS
-        TRISAbits.RA5 = GPIO_DIRECTION_OUTPUT;
+        TRISCbits.RC5 = GPIO_DIRECTION_OUTPUT;  //SDO
+        TRISCbits.RC3 = GPIO_DIRECTION_OUTPUT;  //SCK
+        TRISAbits.RA5 = GPIO_DIRECTION_OUTPUT;  //SS
         //SPI Master Mode Select
         ret &= SPI_Master_Mode_Select(_spi);
         //Sample
@@ -102,12 +99,9 @@ Std_ReturnType SPI_Slave_Init(const spi_t *_spi)
         //Disable SPI
         SPI_DISABLE();
         /* Initialize pins */
-        //SDO
-        TRISCbits.RC5 = GPIO_DIRECTION_OUTPUT;
-        //SCK
-        TRISCbits.RC3 = GPIO_DIRECTION_INPUT;
-        //SS
-        TRISAbits.RA5 = GPIO_DIRECTION_INPUT;
+        TRISCbits.RC5 = GPIO_DIRECTION_OUTPUT;  //SDO
+        TRISCbits.RC3 = GPIO_DIRECTION_INPUT;   //SCK
+        TRISAbits.RA5 = GPIO_DIRECTION_INPUT;   //SS
         //SPI Slave mode select
         switch (_spi->mode)
         {
@@ -238,12 +232,11 @@ Std_ReturnType SPI_DiInit(const spi_t *_spi)
 }
 
 /**
- * @brief The SPI interrupt MCAL helper function
- * 
+ * @brief MSSP SPI interrupt MCAL helper function
  */
 void SPI_ISR(void)
 {
-    //SPI interrupt occurred, the flag must be cleared.
+    //MSSP SPI interrupt occurred, the flag must be cleared.
     SPI_INTERRUPT_FLAG_CLEAR();
     //CallBack func gets called every time this ISR executes.
     if(SPI_InterruptHandler)

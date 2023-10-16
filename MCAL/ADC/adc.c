@@ -53,7 +53,7 @@ Std_ReturnType ADC_Init(const adc_config_t *adc)
             INTERRUPT_GlobalInterruptHighEnable();
             ADC_INT_HIGH_PRIORITY();
         }
-        else if(INTERRUPT_LLOW_PRIORITY == adc->priority)
+        else if(INTERRUPT_LOW_PRIORITY == adc->priority)
         {
             INTERRUPT_GlobalInterruptLowEnable();
             ADC_INT_LOW_PRIORITY();

@@ -30,7 +30,7 @@
 #define SPI_WRITE_COLLISION_UNOCCURRED      0  
 /* -------------- Macro Functions Declarations -------------- */
 //SPI Enable or Disable.
-#define SPI_ENABLE()    (SSPCON1bits.SSPEN = 1)
+#define SPI_ENABLE()     (SSPCON1bits.SSPEN = 1)
 #define SPI_DISABLE()    (SSPCON1bits.SSPEN = 0)
 //SPI receive completed or not yet.
 #define SPI_RECEIVE_STATUS()  (SSPSTATbits.BF)
@@ -59,8 +59,12 @@
                                             SSPSTATbits.CKE = 1; \
                                         } while (0)
 /*
- * return SPI_WRITE_COLLISION_OCCURRED  if buffer is written while transmisting data
- *  return SPI_WRITE_COLLISION_UNOCCURRED  -> NO COLLISION ERROR
+ * Checks if  a new byte is received while the SSPBUF register is still holding the previous data. 
+ */
+#define SPI_RECEIVER_OVERFLOW_CHECK()     (SSPCON1bits.SSPOV)   
+#define SPI_RECEIVER_OVERFLOW_CLEAR()     (SSPCON1bits.SSPOV = 0)
+/*
+ * Checks if buffer is written while transmisting data
  */
 #define SPI_TRANSMIT_COLLISION_CHECK()     (SSPCON1bits.WCOL)   
 #define SPI_TRANSMIT_COLLISION_CLEAR()     (SSPCON1bits.WCOL = 0)                                    
@@ -97,7 +101,6 @@ typedef struct
 #endif
 #endif 
 }spi_t;
-
 
 /* -------------- Software Interfaces Declarations -------------- */
 /**
