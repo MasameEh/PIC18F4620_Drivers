@@ -33,6 +33,15 @@
 //I2C Slave Clock Stretching enabled or disabled.
 #define I2C_SLAVE_CLK_STRETCING_ENABLE_CFG    1
 #define I2C_SLAVE_CLK_STRETCING_DISABLE_CFG   0
+
+#define I2C_WRITE_COLLISION_OCCURRED        1  
+#define I2C_WRITE_COLLISION_UNOCCURRED      0 
+
+#define I2C_RECEIVER_OVERFLOW_OCCURRED        1  
+#define I2C_RECEIVER_OVERFLOW_UNOCCURRED      0
+
+#define I2C_ACK         0  
+#define I2C_NOT_ACK     1
 /* -------------- Macro Functions Declarations -------------- */
 //MSSP I2C Enable or Disable.
 #define I2C_ENABLE()     (SSPCON1bits.SSPEN = 1)
@@ -79,9 +88,9 @@
 
 //Indicates that the last byte received or transmitted was data or address.
 #define I2C_SLAVE_DATA_ADDRESS_CHECK() (SSPSTATbits.D_nA)
-//Indicates that a Stop bit has been detected last OR not.
+//Indicates that a Stop bit has been detected last or not.
 #define I2C_STOP_BIT_CHECK()           (SSPSTATbits.P)
-//Indicates that a Start bit has been detected last OR not.
+//Indicates that a Start bit has been detected last or not.
 #define I2C_START_BIT_CHECK()          (SSPSTATbits.S)
 //I2C Slave checks Read or write operation.
 #define I2C_R_W_CHECK()                (SSPSTATbits.R_W)
@@ -112,6 +121,7 @@ typedef struct
 {
     uint32 i2c_clock_freq;
     I2C_mode_select_t i2c_mode;
+    uint8 i2c_slave_address;
     uint8 master_rec_mode_status : 1;
     uint8 i2c_slew_rate : 1;
     uint8 i2c_SMBus_control: 1;
@@ -120,8 +130,10 @@ typedef struct
     uint8 i2c_reserved : 3;
 #if I2C_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
     void (* I2C_InterruptHandler)(void);
+    void (* I2C_Interrupt_Write_Col)(void);
 #if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
-    interrupt_priority priority;    
+    interrupt_priority i2c_priority; 
+    interrupt_priority i2c_bus_col_priority;   
 #endif
 #endif 
 }I2C_t;
@@ -131,12 +143,13 @@ Std_ReturnType I2C_Master_Init(const I2C_t *_i2c);
 Std_ReturnType I2C_Slave_Init(const I2C_t *_i2c);
 Std_ReturnType I2C_DeInit(const I2C_t *_i2c);
 
-Std_ReturnType I2C_Master_Send_Start(const I2C_t *_i2c);
-Std_ReturnType I2C_Master_Send_Repeated_Start(const I2C_t *_i2c);
-Std_ReturnType I2C_Master_Send_Stop(const I2C_t *_i2c);
+Std_ReturnType I2C_Master_Send_Start();
+Std_ReturnType I2C_Master_Send_Repeated_Start();
+Std_ReturnType I2C_Master_Send_Stop();
 
-Std_ReturnType I2C_Trasmit(const I2C_t *_i2c, const uint8 data);
-Std_ReturnType I2C_Receive(const I2C_t *_i2c, uint8 *rec_data);
+Std_ReturnType I2C_Master_Transmit(uint8 data, uint8 *_ack);
+Std_ReturnType I2C_Master_Receive(const I2C_t *_i2c, uint8 *rec_data, uint8 _ack);
 
+Std_ReturnType I2C_Slave_Trasmit(const uint8 data, uint8 *_ack);
 #endif	/* I2C_H */
 
