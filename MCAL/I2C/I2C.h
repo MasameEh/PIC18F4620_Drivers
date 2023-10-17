@@ -13,6 +13,7 @@
 #include "../GPIO/gpio.h"
 #include "../interrupt/internal_interrupt.h"
 /* -------------- Macro Declarations ------------- */
+//I2C Master Receive mode enable or disable.
 #define I2C_MASTER_RECEIVE_MODE_ENABLE_CFG        1
 #define I2C_MASTER_RECEIVE_MODE_DISABLE_CFG       0  
 //I2C Slew Rate enabled or disabled.
@@ -21,10 +22,10 @@
 //I2C SMBUS enabled OR disabled.
 #define I2C_SMBUS_ENABLE_CFG         1
 #define I2C_SMBUS_DISABLE_CFG        0
-
+//Indicates that a Start bit has been detected or not.
 #define I2C_START_BIT_DETECTED        1
 #define I2C_START_BIT_NOT_DETECTED    0
-
+//Indicates that a Stop bit has been detected or not.
 #define I2C_STOP_BIT_DETECTED         1
 #define I2C_STOP_BIT_NOT_DETECTED     0
 //I2C Slave general call enabled or disabled.
@@ -39,6 +40,12 @@
 
 #define I2C_RECEIVER_OVERFLOW_OCCURRED        1  
 #define I2C_RECEIVER_OVERFLOW_UNOCCURRED      0
+
+#define I2C_LAST_BYTE_DATA          1  
+#define I2C_LAST_BYTE_ADDRESS       0
+
+#define I2C_READ_OPPERATION          1  
+#define I2C_WRITE_OPPERATION         0
 
 #define I2C_ACK         0  
 #define I2C_NOT_ACK     1
@@ -88,9 +95,9 @@
 
 //Indicates that the last byte received or transmitted was data or address.
 #define I2C_SLAVE_DATA_ADDRESS_CHECK() (SSPSTATbits.D_nA)
-//Indicates that a Stop bit has been detected last or not.
+//Indicates that a Stop bit has been detected or not.
 #define I2C_STOP_BIT_CHECK()           (SSPSTATbits.P)
-//Indicates that a Start bit has been detected last or not.
+//Indicates that a Start bit has been detected or not.
 #define I2C_START_BIT_CHECK()          (SSPSTATbits.S)
 //I2C Slave checks Read or write operation.
 #define I2C_R_W_CHECK()                (SSPSTATbits.R_W)
@@ -139,17 +146,148 @@ typedef struct
 }I2C_t;
 
 /* -------------- Software Interfaces Declarations -------------- */
+/**
+ * @brief Initializes the I2C module in master mode based on the provided configuration.
+ * 
+ * This function configures and enables the I2C interface for master mode operation. It allows you to specify
+ * the desired clock frequency, master receiver mode, slew rate control, SMBus control, and interrupt settings.
+ * 
+ * @param _i2c A pointer to the I2C configuration structure (I2C_t).
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation, or an invalid configuration was provided.
+ */
 Std_ReturnType I2C_Master_Init(const I2C_t *_i2c);
+
+/**
+ * @brief Initializes the I2C module in slave mode based on the provided configuration.
+ * 
+ * This function configures and enables the I2C interface for slave mode operation. It allows you to set the slave
+ * address, enable general call support, clock stretching, slew rate control, SMBus control, and interrupt settings.
+ * 
+ * @param _i2c A pointer to the I2C configuration structure (I2C_t).
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation, or an invalid configuration was provided.
+ */
 Std_ReturnType I2C_Slave_Init(const I2C_t *_i2c);
+
+/**
+ * @brief Deinitializes the I2C module.
+ * 
+ * This function disables the I2C interface and clears any associated interrupt configurations.
+ * 
+ * @param _i2c A pointer to the I2C configuration structure (I2C_t).
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
 Std_ReturnType I2C_DeInit(const I2C_t *_i2c);
 
+/**
+ * @brief Sends a start condition for I2C communication.
+ * 
+ * This function initiates an I2C start condition for data transmission. It waits for the completion of the start condition.
+ * 
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The start condition was detected successfully.
+ *         - E_NOT_OK: The start condition was not detected or an error occurred.
+ */
 Std_ReturnType I2C_Master_Send_Start();
+
+/**
+ * @brief Sends a repeated start condition for I2C communication.
+ * 
+ * This function initiates a repeated start condition for I2C data transmission. It waits for the completion of the repeated start condition.
+ * 
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The repeated start condition was detected successfully.
+ *         - E_NOT_OK: The repeated start condition was not detected or an error occurred.
+ */
 Std_ReturnType I2C_Master_Send_Repeated_Start();
+
+/**
+ * @brief Sends a stop condition for I2C communication.
+ * 
+ * This function initiates an I2C stop condition to terminate data transmission. It waits for the completion of the stop condition.
+ * 
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The stop condition was detected successfully.
+ *         - E_NOT_OK: The stop condition was not detected or an error occurred.
+ */
 Std_ReturnType I2C_Master_Send_Stop();
 
+/**
+ * @brief Transmits a byte of data in master mode via the I2C communication.
+ * 
+ * This function sends a data byte on the I2C bus while waiting for completion. It handles data collision, clears the
+ * buffer, and provides acknowledgment status.
+ * 
+ * @param data The byte of data to be transmitted.
+ * @param _ack A pointer to store the acknowledgment status.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation, or an invalid acknowledgment status was provided.
+ */
 Std_ReturnType I2C_Master_Transmit(uint8 data, uint8 *_ack);
+
+/**
+ * @brief Receives a byte of data in master mode via the I2C communication.
+ * 
+ * This function receives a data byte from the I2C bus while waiting for completion. It handles data overflow, provides
+ * acknowledgment status, and allows specifying the acknowledgment behavior.
+ * 
+ * @param _i2c A pointer to the I2C configuration structure (I2C_t).
+ * @param rec_data A pointer to store the received data.
+ * @param _ack The acknowledgment status (I2C_ACK or I2C_NOT_ACK).
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation, or an invalid configuration was provided.
+ */
 Std_ReturnType I2C_Master_Receive(const I2C_t *_i2c, uint8 *rec_data, uint8 _ack);
 
-Std_ReturnType I2C_Slave_Trasmit(const uint8 data, uint8 *_ack);
+/**
+ * @brief Transmits data as a slave in I2C communication.
+ * 
+ * This function allows a slave device to transmit data on the I2C bus. It handles transmission collision and waits for
+ * the operation to complete. The acknowledgment behavior depends on the I2C communication.
+ * 
+ * @param data The data to be transmitted.
+ * @param _ack A pointer to store the acknowledgment status.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
+Std_ReturnType I2C_Slave_Transmit(const uint8 data, uint8 *_ack);
+
+/**
+ * @brief Receives data as a slave in I2C communication.
+ * 
+ * This function allows a slave device to receive data from the I2C bus. It waits for data reception, handles buffer
+ * clearing, and manages the clock for a successful operation.
+ * 
+ * @param rec_data A pointer to store the received data.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
+Std_ReturnType I2C_Slave_Recieve(uint8 *rec_data);
+
+
+/**
+ * @brief Sends a single byte of data in master mode via the I2C communication.
+ * 
+ * This function simplifies the process of sending a single byte of data to a specified slave address using I2C
+ * communication. It manages the start condition, data transmission, acknowledgment, and stop condition.
+ * 
+ * @param slave_address The address of the target slave device.
+ * @param data The byte of data to be transmitted.
+ * @param _ack A pointer to store the acknowledgment status.
+ * @return Std_ReturnType A status indicating the success or failure of the operation.
+ *         - E_OK: The operation was successful.
+ *         - E_NOT_OK: An error occurred during the operation.
+ */
+Std_ReturnType I2C_Master_Send_1Byte(uint8 slave_address, uint8 data, uint8 *_ack);
+s
 #endif	/* I2C_H */
 
