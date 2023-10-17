@@ -197,7 +197,7 @@ Std_ReturnType SPI_Master_Recieve(uint8 *Rec_data, pin_config_t *slave_select)
         //SDO INPUT (Disable spi transmiting)
         TRISCbits.RC5 = GPIO_DIRECTION_INPUT;
         SSPBUF = 0;
-        while(!SPI_RECEIVE_STATUS());
+        while(!SPI_RECEIVE_STATUS());   /* */
         *Rec_data = SSPBUF;
         //SDO OUTPUT (Enable spi transmiting)
         TRISCbits.RC5 = GPIO_DIRECTION_OUTPUT;
@@ -236,6 +236,7 @@ Std_ReturnType SPI_DiInit(const spi_t *_spi)
  */
 void SPI_ISR(void)
 {
+#if SPI_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
     //MSSP SPI interrupt occurred, the flag must be cleared.
     SPI_INTERRUPT_FLAG_CLEAR();
     //CallBack func gets called every time this ISR executes.
@@ -243,6 +244,7 @@ void SPI_ISR(void)
     {
         SPI_InterruptHandler();
     }else{/* Nothing */}
+#endif    
 }
 
 /**

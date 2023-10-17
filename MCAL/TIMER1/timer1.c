@@ -228,6 +228,7 @@ static inline void Timer1_Osc_Config(const timer1_t *timer)
  */
 void TMR1_ISR(void)
 {
+    #if TIMER1_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
     //Timer1 interrupt occurred, the flag must be cleared.
     TIMER1_INTERRUPT_FLAG_CLEAR();
     //Write the preload value every time this ISR executes.
@@ -238,4 +239,5 @@ void TMR1_ISR(void)
     {
         TMR1_InterruptHandler();
     }else{/* Nothing */}
+    #endif
 }

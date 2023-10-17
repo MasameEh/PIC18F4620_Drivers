@@ -206,8 +206,10 @@ static inline void Timer3_RW_Mode_Select(const timer3_t *timer)
  * @brief The Timer3 interrupt MCAL helper function
  * 
  */
+
 void TMR3_ISR(void)
 {
+#if TIMER3_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
     //Timer3 interrupt occurred, the flag must be cleared.
     TIMER3_INTERRUPT_FLAG_CLEAR();
     //Write the preload value every time this ISR executes.
@@ -218,4 +220,5 @@ void TMR3_ISR(void)
     {
         TMR3_InterruptHandler();
     }else{/* Nothing */}
+#endif    
 }

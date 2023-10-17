@@ -162,8 +162,10 @@ Std_ReturnType Timer0_Read(const timer0_t *timer0, uint16 *val)
  * @brief The Timer0 interrupt MCAL helper function
  * 
  */
+
 void TMR0_ISR(void)
 {
+    #if TIMER0_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
     //Timer0 interrupt occurred, the flag must be cleared.
     TIMER0_INTERRUPT_FLAG_CLEAR();
     //Write the preload value every time this ISR executes.
@@ -174,6 +176,7 @@ void TMR0_ISR(void)
     {
         TMR0_InterruptHandler();
     }else{/* Nothing */}
+    #endif
 }
 
 /**

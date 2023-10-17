@@ -159,12 +159,21 @@ void __interrupt() InterruptManager(void)
     }
     /*_________________________ EUSART END _________________________________*/
     /*_________________________ SPI START _________________________________*/
-    if(INTERRUPT_ENABLE == PIE1bits.SSPIE && INTERRUPT_OCCURRED == PIR1bits.SSPIF)
+    if(INTERRUPT_ENABLE == PIE1bits.SSPIE && INTERRUPT_OCCURRED == PIR1bits.SSPIF && SSPCON1bits.SSPM <= 5)
     {
         SPI_ISR(); /* SPI INTERRUPT */
     }
     /*_________________________ SPI END _________________________________*/
-
+    /*_________________________ I2C START _________________________________*/
+    if(INTERRUPT_ENABLE == PIE1bits.SSPIE && INTERRUPT_OCCURRED == PIR1bits.SSPIF && SSPCON1bits.SSPM >= 6)
+    {
+        I2C_ISR(); /* I2C INTERRUPT */
+    }
+    if(INTERRUPT_ENABLE == PIE2bits.BCLIE && INTERRUPT_OCCURRED == PIR2bits.BCLIF)
+    {
+        I2C_BUS_COL_ISR(); /* I2C BUS COLLISION INTERRUPT */
+    }
+    /*_________________________ I2C END _________________________________*/
 
 }
 

@@ -27,6 +27,7 @@
 #define CCP2_INTERRUPT_ENABLE_FEATURE             INTERRUPT_FEATURE_ENABLE
 
 #define SPI_INTERRUPT_ENABLE_FEATURE             INTERRUPT_FEATURE_ENABLE
+#define I2C_INTERRUPT_ENABLE_FEATURE             INTERRUPT_FEATURE_ENABLE
 /* -------------- Macro Functions Declarations --------------*/
 
 /* -------------- Data Types Declarations --------------  */

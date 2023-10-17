@@ -35,7 +35,7 @@
 /* Timer2 Prescaler values  */
 #define TIMER2_PRESCALER_DIV_1     0
 #define TIMER2_PRESCALER_DIV_4     1
-#define TIMER2_PRESCALER_DIV_16     2
+#define TIMER2_PRESCALER_DIV_16    2
 
 /* -------------- Macro Functions Declarations -------------- */
 //Timer2 enable or disable.

@@ -37,5 +37,7 @@ void EUSART_TX_ISR(void);
 void EUSART_RX_ISR(void);
 
 void SPI_ISR(void);
+void I2C_ISR(void);
+void I2C_BUS_COL_ISR(void);
 #endif	/* INTERRUPT_MANAGER_H */
 

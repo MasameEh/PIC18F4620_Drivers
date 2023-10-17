@@ -352,8 +352,10 @@ static inline void ADC_Select_Volt_Ref(const adc_config_t *adc)
  * @brief The ADC interrupt MCAL helper function
  * 
  */
+
 void ADC_ISR(void)
 {
+#if ADC_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
     //The ADC interrupt occurred, the flag must be cleared.
     ADC_INTERRUPT_FLAG_CLEAR();
     /* Code */
@@ -363,4 +365,5 @@ void ADC_ISR(void)
     {
         ADC_InterruptHandler();
     }
+#endif    
 }

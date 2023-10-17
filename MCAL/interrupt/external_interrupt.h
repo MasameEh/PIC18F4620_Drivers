@@ -11,8 +11,6 @@
 #include "interrupt_config.h"
 
 /* -------------- Macro Declarations ------------- */
-#if EXTERNAL_INTERRUPT_INTx_ENABLE==INTERRUPT_FEATURE_ENABLE 
-
 //This macro will enable external interrupt, INT0.
 #define EXT_INT0_ENABLE()               (INTCONbits.INT0E = 1)
 //This macro will disable external interrupt, INT0.
@@ -58,9 +56,7 @@
 #define EXT_INT2_LOW_PRIORITY()        (INTCON3bits.INT2IP = 0)
 #endif
 
-#endif
 
-#if EXTERNAL_INTERRUPT_ONCHANGE_ENABLE==INTERRUPT_FEATURE_ENABLE 
 //This macro will enable external interrupt, RBx.
 #define EXT_RBx_ENABLE()               (INTCONbits.RBIE = 1)
 //This macro will disable external interrupt, RBx.
@@ -75,7 +71,6 @@
 #define EXT_RBIE_LOW_PRIORITY()        (INTCON2bits.RBIP = 0)
 #endif
 
-#endif
 /* -------------- Macro Functions Declarations --------------*/
 
 /* -------------- Data Types Declarations --------------  */

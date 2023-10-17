@@ -124,18 +124,38 @@
 #endif
 #endif
 
+#if I2C_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
+//This macro enables the interrupt for MSSP I2C Mode.
+#define I2C_INTERRUPT_ENABLE()              (PIE1bits.SSPIE = 1)
+#define I2C_BUS_COL_INTERRUPT_ENABLE()      (PIE2bits.BCLIE = 1)
+//This macro disables the interrupt for MSSP I2C Mode.
+#define I2C_INTERRUPT_DISABLE()             (PIE1bits.SSPIE = 0)
+#define I2C_BUS_COL_INTERRUPT_DISABLE()     (PIE2bits.BCLIE = 0)
+//This macro clears the interrupt flag for MSSP I2C Mode.
+#define I2C_INTERRUPT_FLAG_CLEAR()          (PIR1bits.SSPIF = 0)
+#define I2C_BUS_COL_INTERRUPT_FLAG_CLEAR()  (PIR2bits.BCLIF = 0)
+#if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
+//This macro sets MSSP I2C Mode interrupt as high priority.
+#define I2C_INT_HIGH_PRIORITY()             (IPR1bits.SSPIP = 1)
+#define I2C_BUS_COL_INT_HIGH_PRIORITY()     (IPR2bits.BCLIP = 1)
+//This macro sets MSSP I2C Mode interrupt as low priority.
+#define I2C_INT_LOW_PRIORITY()              (IPR1bits.SSPIP = 0)
+#define I2C_BUS_COL_INT_LOW_PRIORITY()      (IPR2bits.BCLIP = 0)
+#endif
+#endif
+
 #if SPI_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
-//This macro enables the interrupt for SPI module.
+//This macro enables the interrupt for MSSP SPI Mode.
 #define SPI_INTERRUPT_ENABLE()      (PIE1bits.SSPIE = 1)
-//This macro disables the interrupt for SPI module.
+//This macro disables the interrupt for MSSP SPI Mode.
 #define SPI_INTERRUPT_DISABLE()     (PIE1bits.SSPIE  = 0)
-//This macro clears the interrupt flag for SPI.
+//This macro clears the interrupt flag for MSSP SPI Mode.
 #define SPI_INTERRUPT_FLAG_CLEAR()  (PIR1bits.SSPIF = 0)
 
 #if INTERRUPT_PRIORITY_LEVELS_ENABLE==INTERRUPT_FEATURE_ENABLE
-//This macro sets SPI interrupt as high priority.
+//This macro sets MSSP SPI Mode interrupt as high priority.
 #define SPI_INT_HIGH_PRIORITY()      (IPR1bits.SSPIP = 1)
-//This macro sets SPI interrupt as low priority.
+//This macro sets MSSP SPI Mode interrupt as low priority.
 #define SPI_INT_LOW_PRIORITY()       (IPR1bits.SSPIP = 0)
 #endif
 #endif

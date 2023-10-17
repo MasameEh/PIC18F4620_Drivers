@@ -152,8 +152,10 @@ Std_ReturnType Timer2_Read(const timer2_t *timer, uint8 *val)
  * @brief The Timer2 interrupt MCAL helper function
  * 
  */
+
 void TMR2_ISR(void)
 {
+#if TIMER2_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE    
     //Timer2 interrupt occurred, the flag must be cleared.
     TIMER2_INTERRUPT_FLAG_CLEAR();
     //Write the preload value every time this ISR executes.
@@ -163,4 +165,6 @@ void TMR2_ISR(void)
     {
         TMR2_InterruptHandler();
     }else{/* Nothing */}
+#endif    
 }
+

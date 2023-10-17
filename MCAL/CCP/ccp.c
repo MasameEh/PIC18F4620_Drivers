@@ -233,7 +233,7 @@ Std_ReturnType CCP_Is_Compare_Completed(const ccp_t *_ccp, uint8 *status)
             if(CCP_COMPARE_READY == PIR1bits.CCP1IF)
             {
                 *status = CCP_COMPARE_READY;
-                CCP1_INTERRUPT_FLAG_CLEAR();
+                PIR1bits.CCP1IF = 0;
             }
             else if(CCP_COMPARE_NOT_READY == PIR1bits.CCP1IF)
             {
@@ -246,7 +246,7 @@ Std_ReturnType CCP_Is_Compare_Completed(const ccp_t *_ccp, uint8 *status)
             if(CCP_COMPARE_READY == PIR2bits.CCP2IF)
             {
                 *status = CCP_COMPARE_READY;
-                CCP2_INTERRUPT_FLAG_CLEAR();
+                PIR1bits.CCP1IF = 0;
             }
             else if(CCP_COMPARE_NOT_READY == PIR2bits.CCP2IF)
             {
@@ -366,13 +366,13 @@ Std_ReturnType CCP_PMW_Stop(const ccp_t *_ccp)
 }   
 #endif
 
-
 /**
  * @brief The CCP1 interrupt MCAL helper function
  * 
  */
 void CCP1_ISR(void)
 {
+#if CCP1_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE    
     //CCP1 interrupt occurred, the flag must be cleared.
     CCP1_INTERRUPT_FLAG_CLEAR();
     //CallBack func gets called every time this ISR executes.
@@ -380,6 +380,7 @@ void CCP1_ISR(void)
     {
         CCP1_InterruptHandler();
     }else{/* Nothing */}
+#endif    
 }
 
 /**
@@ -388,6 +389,7 @@ void CCP1_ISR(void)
  */
 void CCP2_ISR(void)
 {
+#if CCP2_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE    
     //CCP2 interrupt occurred, the flag must be cleared.
     CCP2_INTERRUPT_FLAG_CLEAR();
     //CallBack func gets called every time this ISR executes.
@@ -395,6 +397,7 @@ void CCP2_ISR(void)
     {
         CCP2_InterruptHandler();
     }else{/* Nothing */}
+#endif    
 }
 
 
