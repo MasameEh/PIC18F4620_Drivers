@@ -7,8 +7,8 @@
 #include "I2C.h"
 
 #if I2C_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
-static void (* I2C_InterruptHandler)(void) = NULL;
-static void (* I2C_Interrupt_Write_Col)(void) = NULL;
+static void (*I2C_InterruptHandler)(void) = NULL;
+static void (*I2C_Interrupt_Write_Col)(void) = NULL;
 #endif
 
 static void inline I2C_Gpio_Configurations();
@@ -349,6 +349,7 @@ Std_ReturnType I2C_Slave_Transmit(const uint8 data, uint8 *_ack)
     {
         dummy_data = SSPBUF;  /* Read the last Byte to clear the buffer */
         SSPBUF = data;
+        I2C_SLAVE_RELEASE_CLOCK(); 
         if(I2C_TRANSMIT_COLLISION_CHECK() == I2C_WRITE_COLLISION_OCCURRED)
         {
             I2C_TRANSMIT_COLLISION_CLEAR();
@@ -416,38 +417,7 @@ Std_ReturnType I2C_Master_Send_1Byte(uint8 slave_address, uint8 data, uint8 *_ac
     ret &= I2C_Master_Send_Stop();
     return ret; 
 }
-/**
- * @brief MSSP I2C interrupt MCAL helper function
- */
-void I2C_ISR()
-{
-#if I2C_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
-    //MSSP I2C interrupt occurred, the flag must be cleared.
-    I2C_INTERRUPT_FLAG_CLEAR();
-    //CallBack func gets called every time this ISR executes.
-    if(I2C_InterruptHandler)
-    {
-        I2C_InterruptHandler();
-    }else{/* Nothing */}
-#endif    
-}
 
-/**
- * @brief MSSP I2C Bus Collision interrupt MCAL helper function
- */
-
-void I2C_BUS_COL_ISR()
-{
-#if I2C_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
-    //MSSP I2C interrupt occurred, the flag must be cleared
-    I2C_BUS_COL_INTERRUPT_FLAG_CLEAR();
-    //CallBack func gets called every time this ISR executes.
-    if(I2C_Interrupt_Write_Col)
-    {
-        I2C_Interrupt_Write_Col();
-    }else{/* Nothing */}
-#endif
-}
 
 /**
  * @brief Helper function to Select Master Mode  
@@ -518,4 +488,37 @@ static void inline I2C_Gpio_Configurations()
 {
     TRISCbits.RC3 = GPIO_DIRECTION_INPUT;  /* SCL */
     TRISCbits.RC4 = GPIO_DIRECTION_INPUT;  /* SDA */
+}
+
+/**
+ * @brief MSSP I2C interrupt MCAL helper function
+ */
+void I2C_ISR()
+{
+#if I2C_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
+    //MSSP I2C interrupt occurred, the flag must be cleared.
+    I2C_INTERRUPT_FLAG_CLEAR();
+    //CallBack func gets called every time this ISR executes.
+    if(I2C_InterruptHandler)
+    {
+        I2C_InterruptHandler();
+    }else{/* Nothing */}
+#endif    
+}
+
+/**
+ * @brief MSSP I2C Bus Collision interrupt MCAL helper function
+ */
+
+void I2C_BUS_COL_ISR()
+{
+#if I2C_INTERRUPT_ENABLE_FEATURE==INTERRUPT_FEATURE_ENABLE
+    //MSSP I2C interrupt occurred, the flag must be cleared
+    I2C_BUS_COL_INTERRUPT_FLAG_CLEAR();
+    //CallBack func gets called every time this ISR executes.
+    if(I2C_Interrupt_Write_Col)
+    {
+        I2C_Interrupt_Write_Col();
+    }else{/* Nothing */}
+#endif
 }

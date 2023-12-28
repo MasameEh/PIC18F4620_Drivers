@@ -247,7 +247,6 @@ Std_ReturnType ADC_Get_Result(const adc_config_t *adc, uint16 *adc_res);
  */
 Std_ReturnType ADC_Get_Conversion_Blocking(const adc_config_t *adc, adc_channel_t channel, 
                                   uint16 *adc_res);
-
 /**
  * @brief Initiates a non-blocking ADC conversion with interrupt    .
  * 
@@ -262,5 +261,6 @@ Std_ReturnType ADC_Get_Conversion_Blocking(const adc_config_t *adc, adc_channel_
  *         - E_NOT_OK: An error occurred during the operation.
  */
 Std_ReturnType ADC_Start_Conversion_Interrupt(const adc_config_t *adc, adc_channel_t channel);
+
 #endif	/* ADC_H */
 

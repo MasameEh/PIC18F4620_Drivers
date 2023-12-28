@@ -27,9 +27,9 @@
 //This macro will disable the priority levels on interrupts.
 #define INTERRUPT_PriorityLevelsDisable()         (RCONbits.IPEN = 0)
 
-//This macro will enable low-priority global interrupts.
+//This macro enables high-priority global interrupts.
 #define INTERRUPT_GlobalInterruptHighEnable()     (INTCONbits.GIEH = 1)
-//This macro will disable high-priority global interrupts.
+//This macro disables high-priority global interrupts.
 #define INTERRUPT_GlobalInterruptHighDisable()    (INTCONbits.GIEH = 0)
 
 //This macro will enable low-priority global interrupts.

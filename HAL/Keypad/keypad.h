@@ -21,7 +21,7 @@
 /* -------------- Data Types Declarations --------------  */
 typedef struct
 {
-    pin_config_t keypad_rows_pins[KEYPAD_ROWS_NUM];     // Array of pin configurations for keypad rows
+    pin_config_t keypad_rows_pins[KEYPAD_ROWS_NUM];        // Array of pin configurations for keypad rows
     pin_config_t keypad_columns_pins[KEYPAD_COLUMNS_NUM];  // Array of pin configurations for keypad columns
 } keypad_t;  // Structure to hold the keypad configuration
  
@@ -30,8 +30,8 @@ typedef struct
 /* -------------- Functions Declarations --------------*/
 
 /**
- * @brief Initializes the keypad by configuring its rows and columns as input and output pins, respectively.
- * 
+ * @brief Initializes the keypad by configuring its rows and columns as OUTPUT and INPUT pins, respectively.
+ * @note must connect the Columns pins to ground
  * @param keypad A pointer to the keypad configuration structure.
  * @return Std_ReturnType A status indicating the success or failure of the operation.
  *         - E_OK: The operation was successful.

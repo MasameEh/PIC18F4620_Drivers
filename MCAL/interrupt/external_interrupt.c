@@ -45,7 +45,7 @@ static Std_ReturnType Interrupt_INTx_SetInterruptHandler(const ext_interrupt_INT
  *   - E_OK: The external interrupt initialization was successful.
  *   - E_NOT_OK: The external interrupt initialization failed due to a NULL configuration pointer.
  */
-    Std_ReturnType Interrupt_INTx_Init(const ext_interrupt_INTx_t *ext_int)
+Std_ReturnType Interrupt_INTx_Init(const ext_interrupt_INTx_t *ext_int)
     {
         Std_ReturnType ret = E_OK;
 

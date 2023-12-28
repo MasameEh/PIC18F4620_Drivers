@@ -288,6 +288,6 @@ Std_ReturnType I2C_Slave_Recieve(uint8 *rec_data);
  *         - E_NOT_OK: An error occurred during the operation.
  */
 Std_ReturnType I2C_Master_Send_1Byte(uint8 slave_address, uint8 data, uint8 *_ack);
-s
+
 #endif	/* I2C_H */
 

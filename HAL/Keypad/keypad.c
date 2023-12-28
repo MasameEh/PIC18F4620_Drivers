@@ -16,8 +16,8 @@ static const uint8 keypad_values[KEYPAD_ROWS_NUM][KEYPAD_COLUMNS_NUM] = {
                                                                 };
 
 /**
- * @brief Initializes the keypad by configuring its rows and columns as input and output pins, respectively.
- * 
+ * @brief Initializes the keypad by configuring its rows and columns OUTPUT and INPUT pins, respectively.
+ * @note must connect the Columns pins to ground
  * @param keypad A pointer to the keypad configuration structure.
  * @return Std_ReturnType A status indicating the success or failure of the operation.
  *         - E_OK: The operation was successful.
