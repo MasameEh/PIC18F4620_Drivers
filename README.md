@@ -57,15 +57,20 @@ The MCAL directory contains low-level drivers and abstractions specific to the P
 
 #### Modules
 
-- **GPIO**: The GPIO (General-Purpose Input/Output) module is responsible for configuring and controlling the digital input and output pins of the PIC18F4620 microcontroller. It provides functions for pin initialization, read, write, and more.
-
+#### Modules
+- **GPIO**: Configuration and control of digital input and output pins.
+- **interrupt**: Handling interrupt-related functionality.
+- **ADC**: Interface with the analog-to-digital converter peripheral.
+- **CCP**: Configuration and control of Capture, Compare, and PWM features.
+- **EEPROM**: Accessing internal EEPROM memory.
+- **I2C**: Implementing I2C communication protocol.
+- **SPI**: Configuring and controlling the Serial Peripheral Interface.
+- **USART**: Configuration and control of the Universal Synchronous/Asynchronous Receiver/Transmitter.
+- **TIMER0, TIMER1, TIMER2, TIMER3**: Configuration and control of timer peripherals.
 - **std_libraries.h and std_types.h**: These header files define standard types and libraries used throughout the project. They enhance code portability and readability.
 
 ### Application
 
-The Application directory is where you can place your specific application code that uses the drivers from the HAL and MCAL directories. This is where you can create projects and build applications tailored to your requirements.
+The Application files is where you can place your specific application code that uses the drivers from the HAL and MCAL directories. This is where you can create projects and build applications tailored to your requirements.
 
-## Usage
-
-In the Application directory, you can develop your PIC18F4620 microcontroller applications using the provided drivers. You can include your main application code and organize your project files here.
 
